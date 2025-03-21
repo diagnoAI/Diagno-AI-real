@@ -1,0 +1,24 @@
+.dashboard-home-container {
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+  
+  .dashboard-home-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-home-text {
+    font-size: 1rem;
+    color: #4b5563;
+  }
+  
+  .dashboard-page.dark .dashboard-home-title {
+    color: #ffffff;
+  }
+  
+  .dashboard-page.dark .dashboard-home-text {
+    color: #d1d5db;
+  }

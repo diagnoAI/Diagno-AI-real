@@ -1,0 +1,21 @@
+.report-container {
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+  
+  .report-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 2rem;
+  }
+  
+  .report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .dashboard-page.dark .report-title {
+    color: #ffffff;
+  }

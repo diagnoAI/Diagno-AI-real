@@ -1,0 +1,24 @@
+.settings-container {
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+  
+  .settings-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 2rem;
+  }
+  
+  .settings-text {
+    font-size: 1rem;
+    color: #4b5563;
+  }
+  
+  .dashboard-page.dark .settings-title {
+    color: #ffffff;
+  }
+  
+  .dashboard-page.dark .settings-text {
+    color: #d1d5db;
+  }

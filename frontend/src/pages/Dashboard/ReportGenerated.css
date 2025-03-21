@@ -1,0 +1,25 @@
+.report-generated-container {
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+  
+  .report-generated-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 1rem;
+  }
+  
+  .report-generated-text {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+  }
+  
+  .report-placeholder {
+    background: #f3f4f6;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    color: #6b7280;
+  }

@@ -1,0 +1,29 @@
+.setup-step2-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+    padding: 3rem 1rem;
+  }
+  
+  .setup-step2-container {
+    max-width: 28rem;
+    width: 100%;
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+  
+  .setup-step2-title {
+    text-align: center;
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 2rem;
+  }
+  
+  .setup-step2-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }

@@ -1,0 +1,123 @@
+.upload-container {
+  border-radius: 0.75rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.upload-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #ffffff;
+}
+
+.dropzone {
+  border: 2px dashed #2563eb;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropzone-icon {
+  width: 3rem;
+  height: 3rem;
+  color: #2563eb;
+}
+
+.dropzone-label {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+.dropzone-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.dropzone-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-submit {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #2563eb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-submit:hover {
+  background: #1d4ed8;
+}
+
+.form-submit:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+}

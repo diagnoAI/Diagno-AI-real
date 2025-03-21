@@ -1,0 +1,22 @@
+.analyzing-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+  }
+  
+  .analyzing-circle {
+    width: 100px;
+    height: 100px;
+    border: 10px solid #2563eb;
+    border-top: 10px solid transparent;
+    border-radius: 50%;
+  }
+  
+  .analyzing-text {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #111827;
+  }

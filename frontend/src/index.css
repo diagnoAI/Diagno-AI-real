@@ -1,0 +1,60 @@
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Components */
+.nav-link {
+  color: #4b5563;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #2563eb;
+}
+
+/* Glass morphism utilities */
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Additional hover states */
+.hover\:bg-gray-100:hover {
+  background: #f3f4f6;
+}
+
+.hover\:bg-blue-700:hover {
+  background: #1d4ed8;
+}
+
+/* Focus states */
+.focus\:outline-none:focus {
+  outline: none;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 1);
+}
+
+.focus\:ring-offset-2:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(37, 99, 235, 1);
+}
+
+.focus\:ring-blue-500:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(59, 130, 246, 1);
+}
