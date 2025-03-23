@@ -83,14 +83,14 @@ export function Contact() {
               <Mail className="contact-icon" />
               <div>
                 <h3 className="contact-item-title">Email</h3>
-                <p className="contact-item-text">support@diagnoai.com</p>
+                <p className="contact-item-text">diagnoai@gmail.com</p>
               </div>
             </div>
             <div className="contact-item">
               <Phone className="contact-icon" />
               <div>
                 <h3 className="contact-item-title">Phone</h3>
-                <p className="contact-item-text">+1 (555) 123-4567</p>
+                <p className="contact-item-text">9344422588</p>
               </div>
             </div>
             <div className="contact-item">
@@ -98,8 +98,8 @@ export function Contact() {
               <div>
                 <h3 className="contact-item-title">Address</h3>
                 <p className="contact-item-text">
-                  123 Innovation Drive<br />
-                  Silicon Valley, CA 94025
+                  Sadakathulla Appa College<br />
+                  Tirunelveli, Tamil Nadu, India - 627008 
                 </p>
               </div>
             </div>

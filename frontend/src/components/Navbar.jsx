@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Stethoscope, User } from 'lucide-react';
+import { Stethoscope, User, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { clsx } from 'clsx';
 import '../styles/Navbar.css';
@@ -9,7 +9,8 @@ import '../styles/Navbar.css';
 export function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for click toggle
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -19,19 +20,23 @@ export function Navbar() {
     { path: '/contact', label: 'Contact' },
   ];
 
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen); // Toggle on click
-  const closeDropdown = () => setIsDropdownOpen(false); // Close on action
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+  const closeDropdown = () => setIsDropdownOpen(false);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-content">
-          <Link to="/" className="navbar-logo">
+          {/* Logo on Left */}
+          <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
             <Stethoscope className="navbar-logo-icon" />
             <span className="navbar-logo-text">Diagno AI</span>
           </Link>
 
-          <div className="navbar-links md:flex">
+          {/* Desktop Nav Links */}
+          <div className="navbar-links md:flex hidden">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -53,56 +58,84 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="navbar-auth">
-            {isAuthenticated ? (
-              <div className="navbar-user">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="navbar-user-button"
-                  onClick={toggleDropdown} // Toggle on click
-                >
-                  {user?.profileImage ? (
-                    <img
-                      src={user.profileImage}
-                      alt={user.name}
-                      className="navbar-user-image"
-                    />
-                  ) : (
-                    <User className="navbar-user-icon" />
-                  )}
-                </motion.button>
-                <div
-                  className={clsx('navbar-dropdown', {
-                    'navbar-dropdown-open': isDropdownOpen, // Open on click
-                  })}
-                >
-                  <Link
-                    to="/dashboard"
-                    className="navbar-dropdown-item hover:bg-gray-100"
-                    onClick={closeDropdown} // Close on click
+          {/* Right Side: User Icon + Hamburger */}
+          <div className="navbar-right">
+            <div className="navbar-auth">
+              {isAuthenticated ? (
+                <div className="navbar-user">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    className="navbar-user-button"
+                    onClick={toggleDropdown}
                   >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      closeDropdown(); // Close on logout
-                    }}
-                    className="navbar-dropdown-button hover:bg-gray-100"
+                    {user?.profileImage ? (
+                      <img
+                        src={user.profileImage}
+                        alt={user.name}
+                        className="navbar-user-image"
+                      />
+                    ) : (
+                      <User className="navbar-user-icon" />
+                    )}
+                  </motion.button>
+                  <div
+                    className={clsx('navbar-dropdown', {
+                      'navbar-dropdown-open': isDropdownOpen,
+                    })}
                   >
-                    Logout
-                  </button>
+                    <Link
+                      to="/dashboard"
+                      className="navbar-dropdown-item hover:bg-gray-100"
+                      onClick={closeDropdown}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        closeDropdown();
+                      }}
+                      className="navbar-dropdown-button hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="navbar-login hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Login
-              </Link>
-            )}
+              ) : (
+                <Link
+                  to="/login"
+                  className="navbar-login hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={closeMobileMenu}
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+
+            {/* Single Hamburger Button */}
+            <button
+              className="navbar-hamburger md:hidden"
+              onClick={toggleMobileMenu}
+            >
+              <Menu className="navbar-hamburger-icon" />
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="navbar-mobile-menu md:hidden">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="navbar-mobile-link"
+                  onClick={closeMobileMenu}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </nav>

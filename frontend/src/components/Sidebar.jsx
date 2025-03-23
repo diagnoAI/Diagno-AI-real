@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Upload, FileText, Settings, LogOut, Menu, Home, ArrowLeft } from 'lucide-react'; // Add Home and ArrowLeft
+import { User, Upload, FileText, Settings, LogOut, Menu, Home, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Sidebar.css';
 
-export function Sidebar() {
+export function Sidebar({ onToggle }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsCollapsed(true);
+      } else {
+        setIsCollapsed(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (onToggle) {
+      onToggle(isCollapsed); // Notify parent of collapse state
+    }
+  }, [isCollapsed, onToggle]);
+
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -18,17 +45,17 @@ export function Sidebar() {
         >
           <ArrowLeft className="sidebar-back-icon" />
         </button>
-        <h4 className='h4'>HOME</h4>
+        {!isCollapsed && <h4 className="h4">HOME</h4>}
         <button
           className="hover:bg-gray-100 sidebar-toggle-button"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={toggleSidebar}
         >
           <Menu className="sidebar-toggle-icon" />
         </button>
       </div>
       <div className="sidebar-profile">
         <img
-          src={user?.profileImage || 'https://via.placeholder.com/100'}
+          src={user?.profileImage || '/default-profile.png'}
           alt={user?.name}
           className="sidebar-profile-image"
         />
@@ -70,14 +97,7 @@ export function Sidebar() {
             {!isCollapsed && 'Settings'}
           </div>
         </Link>
-        <button
-          onClick={() => {
-            logout();
-            navigate('/');
-            
-          }}
-          className="sidebar-link sidebar-logout"
-        >
+        <button onClick={handleLogout} className="sidebar-link sidebar-logout">
           <div className="tooltip-wrapper">
             <LogOut className="sidebar-icon" />
             {isCollapsed && <span className="tooltip">Logout</span>}

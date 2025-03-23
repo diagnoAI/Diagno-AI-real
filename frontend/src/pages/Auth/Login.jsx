@@ -41,7 +41,7 @@ export function Login() {
         animate={{ opacity: 1, y: 0 }}
         className="glass login-container"
       >
-        <h2 className="login-title">Login</h2>
+        <h2 className="login-title">Sign in to Diagno AI</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email</label>
