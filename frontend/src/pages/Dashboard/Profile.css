@@ -343,6 +343,9 @@
 
 /* Responsive */
 @media (min-width: 768px) {
+  .profile-card{
+    width: 100%;
+  }
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
