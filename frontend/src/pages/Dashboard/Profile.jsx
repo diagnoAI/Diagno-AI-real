@@ -11,9 +11,15 @@ export function Profile() {
   const { user, updateProfile } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect if no user
+  useEffect(() => {
+    if (!user) {
+      console.log('No user data - redirecting to login');
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   if (!user) {
-    console.log('No user data - redirecting to login');
-    navigate('/'); // Redirect to login if no user
     return null;
   }
 
@@ -57,7 +63,7 @@ export function Profile() {
       await updateProfile(formData);
       toast.success('Profile updated successfully');
       setIsEditingProfile(false);
-      Object.assign(user, formData);
+      // Remove Object.assign - rely on context to update user
     } catch (error) {
       toast.error('Failed to update profile');
     } finally {
@@ -72,7 +78,7 @@ export function Profile() {
       await updateProfile({ profileImage: formData.profileImage });
       toast.success('Profile photo updated successfully');
       setIsEditingPhoto(false);
-      Object.assign(user, { profileImage: formData.profileImage });
+      // Remove Object.assign - rely on context to update user
     } catch (error) {
       toast.error('Failed to update photo');
     } finally {
@@ -245,7 +251,7 @@ export function Profile() {
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   className="form-input form-textarea"
-                  rows="2" // Reduced rows for compactness
+                  rows="2"
                 />
               </motion.div>
             </div>
