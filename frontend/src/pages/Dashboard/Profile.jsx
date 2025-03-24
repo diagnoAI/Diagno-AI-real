@@ -19,7 +19,7 @@ export function Profile() {
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingPhoto, setIsEditingPhoto] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Added for save animation
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     specialization: user?.specialization || '',
@@ -57,7 +57,7 @@ export function Profile() {
       await updateProfile(formData);
       toast.success('Profile updated successfully');
       setIsEditingProfile(false);
-      Object.assign(user, formData); // Sync user data
+      Object.assign(user, formData);
     } catch (error) {
       toast.error('Failed to update profile');
     } finally {
@@ -72,7 +72,7 @@ export function Profile() {
       await updateProfile({ profileImage: formData.profileImage });
       toast.success('Profile photo updated successfully');
       setIsEditingPhoto(false);
-      Object.assign(user, { profileImage: formData.profileImage }); // Sync photo
+      Object.assign(user, { profileImage: formData.profileImage });
     } catch (error) {
       toast.error('Failed to update photo');
     } finally {
@@ -245,7 +245,7 @@ export function Profile() {
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   className="form-input form-textarea"
-                  rows="3"
+                  rows="2" // Reduced rows for compactness
                 />
               </motion.div>
             </div>
@@ -308,7 +308,7 @@ export function Profile() {
                     <div className="dropzone-content">
                       <Upload className="dropzone-icon" />
                       <p className="dropzone-text">
-                        {isDragActive ? 'Drop the photo here' : 'Upload Profile Photo'}
+                        {isDragActive ? 'Drop here' : 'Upload Photo'}
                       </p>
                     </div>
                   )}
@@ -386,7 +386,7 @@ export function Profile() {
                   </div>
                   <div className="detail-item">
                     <Award className="detail-icon" />
-                    <span>{user?.experience} years experience</span>
+                    <span>{user?.experience} years</span>
                   </div>
                 </motion.div>
               </div>
@@ -405,7 +405,7 @@ export function Profile() {
                   <span>{user?.phone}</span>
                 </div>
                 <div className="detail-item detail-bio">
-                  <span>{user?.bio || 'No bio provided'}</span>
+                  <span>{user?.bio || 'No bio'}</span>
                 </div>
               </motion.div>
             </motion.div>
