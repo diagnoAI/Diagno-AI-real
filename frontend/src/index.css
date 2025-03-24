@@ -22,7 +22,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom animations */
+
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -33,7 +33,7 @@
   animation: float 3s ease-in-out infinite;
 }
 
-/* Additional hover states */
+
 .hover\:bg-gray-100:hover {
   background: #f3f4f6;
 }
@@ -42,7 +42,7 @@
   background: #1d4ed8;
 }
 
-/* Focus states */
+
 .focus\:outline-none:focus {
   outline: none;
 }

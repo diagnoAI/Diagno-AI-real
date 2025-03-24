@@ -24,6 +24,7 @@ export function AuthProvider({ children }) {
       name: name || prev.name,
       hospital: hospital || prev.hospital,
       profileImage: profileImage instanceof File ? URL.createObjectURL(profileImage) : profileImage || prev.profileImage,
+
     }));
   };
   const logout = () => {

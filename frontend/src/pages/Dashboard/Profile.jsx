@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Building2, Award, Mail, Phone, Upload, Edit2, Camera } from 'lucide-react';
+import { User, Building2, Award, Mail, Phone, Upload, Edit2, Camera, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ export function Profile() {
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Added for save animation
   const [formData, setFormData] = useState({
     name: user?.name || '',
     specialization: user?.specialization || '',
@@ -51,6 +52,7 @@ export function Profile() {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await updateProfile(formData);
       toast.success('Profile updated successfully');
@@ -58,11 +60,14 @@ export function Profile() {
       Object.assign(user, formData); // Sync user data
     } catch (error) {
       toast.error('Failed to update profile');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handlePhotoSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await updateProfile({ profileImage: formData.profileImage });
       toast.success('Profile photo updated successfully');
@@ -70,6 +75,8 @@ export function Profile() {
       Object.assign(user, { profileImage: formData.profileImage }); // Sync photo
     } catch (error) {
       toast.error('Failed to update photo');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,40 +108,54 @@ export function Profile() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className="profile-container"
     >
       <div className="profile-card">
-        <div className="profile-header">
+        <motion.div
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="profile-header"
+        >
           <h1 className="profile-title">Doctor Profile</h1>
-          {/* Buttons stay here for desktop */}
           <div className="header-buttons desktop-buttons">
             {!isEditingProfile && !isEditingPhoto && (
               <>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setIsEditingProfile(true)}
                   className="edit-profile-button"
                 >
                   <Edit2 className="edit-icon" />
                   Edit Profile
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setIsEditingPhoto(true)}
                   className="edit-photo-button"
                 >
                   <Camera className="edit-icon" />
                   Edit Profile Photo
-                </button>
+                </motion.button>
               </>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {isEditingProfile ? (
           <form onSubmit={handleProfileSubmit} className="profile-form">
             <div className="form-grid">
-              <div className="form-group">
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="form-group"
+              >
                 <label className="form-label">Name</label>
                 <input
                   type="text"
@@ -142,8 +163,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="form-group"
+              >
                 <label className="form-label">Hospital/Clinic</label>
                 <input
                   type="text"
@@ -151,8 +177,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="form-group"
+              >
                 <label className="form-label">Specialization</label>
                 <input
                   type="text"
@@ -160,8 +191,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="form-group"
+              >
                 <label className="form-label">Years of Experience</label>
                 <input
                   type="number"
@@ -169,8 +205,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="form-group"
+              >
                 <label className="form-label">Email</label>
                 <input
                   type="email"
@@ -178,8 +219,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="form-group"
+              >
                 <label className="form-label">Phone</label>
                 <input
                   type="tel"
@@ -187,8 +233,13 @@ export function Profile() {
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="form-input"
                 />
-              </div>
-              <div className="form-group">
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="form-group"
+              >
                 <label className="form-label">Bio</label>
                 <textarea
                   value={formData.bio}
@@ -196,19 +247,45 @@ export function Profile() {
                   className="form-input form-textarea"
                   rows="3"
                 />
-              </div>
+              </motion.div>
             </div>
             <div className="form-actions">
-              <button type="button" onClick={handleProfileCancel} className="cancel-button">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={handleProfileCancel}
+                className="cancel-button"
+              >
                 Cancel
-              </button>
-              <button type="submit" className="form-submit">Save Changes</button>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="form-submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="spinner" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </motion.button>
             </div>
           </form>
         ) : isEditingPhoto ? (
           <form onSubmit={handlePhotoSubmit} className="profile-form">
             <div className="form-grid">
-              <div className="form-group">
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="form-group"
+              >
                 <label className="form-label">Profile Photo</label>
                 <div {...getRootProps()} className="profile-dropzone">
                   <input {...getInputProps()} />
@@ -236,20 +313,51 @@ export function Profile() {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             </div>
             <div className="form-actions">
-              <button type="button" onClick={handlePhotoCancel} className="cancel-button">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={handlePhotoCancel}
+                className="cancel-button"
+              >
                 Cancel
-              </button>
-              <button type="submit" className="form-submit">Save Photo</button>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="form-submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="spinner" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Photo'
+                )}
+              </motion.button>
             </div>
           </form>
         ) : (
           <>
-            <div className="profile-details">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="profile-details"
+            >
               <div className="details-left">
-                <div className="profile-info">
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="profile-info"
+                >
                   {profileImagePreview ? (
                     <img
                       src={profileImagePreview}
@@ -265,8 +373,13 @@ export function Profile() {
                     <h2 className="profile-name">Dr. {user?.name}</h2>
                     <p className="profile-specialization">{user?.specialization}</p>
                   </div>
-                </div>
-                <div className="details-list">
+                </motion.div>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="details-list"
+                >
                   <div className="detail-item">
                     <Building2 className="detail-icon" />
                     <span>{user?.hospital}</span>
@@ -275,9 +388,14 @@ export function Profile() {
                     <Award className="detail-icon" />
                     <span>{user?.experience} years experience</span>
                   </div>
-                </div>
+                </motion.div>
               </div>
-              <div className="details-right">
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="details-right"
+              >
                 <div className="detail-item">
                   <Mail className="detail-icon" />
                   <span>{user?.email}</span>
@@ -289,29 +407,37 @@ export function Profile() {
                 <div className="detail-item detail-bio">
                   <span>{user?.bio || 'No bio provided'}</span>
                 </div>
-              </div>
-            </div>
-            {/* Buttons move here for mobile */}
-            <div className="mobile-buttons">
+              </motion.div>
+            </motion.div>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="mobile-buttons"
+            >
               {!isEditingProfile && !isEditingPhoto && (
                 <>
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setIsEditingProfile(true)}
                     className="edit-profile-button"
                   >
                     <Edit2 className="edit-icon" />
                     Edit Profile
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setIsEditingPhoto(true)}
                     className="edit-photo-button"
                   >
                     <Camera className="edit-icon" />
                     Edit Profile Photo
-                  </button>
+                  </motion.button>
                 </>
               )}
-            </div>
+            </motion.div>
           </>
         )}
       </div>

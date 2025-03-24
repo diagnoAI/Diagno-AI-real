@@ -30,7 +30,7 @@ export function Navbar() {
       <div className="navbar-container">
         <div className="navbar-content">
           {/* Logo on Left */}
-          <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
+          <Link to="/" className="navbar-logo" onClick={()=>{closeDropdown(); closeMobileMenu();}}>
             <Stethoscope className="navbar-logo-icon" />
             <span className="navbar-logo-text">Diagno AI</span>
           </Link>
