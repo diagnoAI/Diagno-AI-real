@@ -1,24 +1,192 @@
+/* Dashboard Container */
 .dashboard-home-container {
-    border-radius: 0.75rem;
-    padding: 2rem;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(145deg, #f7fafc 0%, #e3f2fd 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Subtle Background Pattern */
+.dashboard-home-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://www.transparenttextures.com/patterns/white-wave.png');
+  opacity: 0.03;
+  z-index: 0;
+}
+
+/* Header */
+.dashboard-home-header {
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-home-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.dashboard-home-text {
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #1e40af;
+  margin-bottom: 1rem;
+}
+
+/* Main Stats Section */
+.stats-section {
+  margin-bottom: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  z-index: 1;
+}
+
+.stats-card {
+  position: relative;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f7fafc;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Quick Stats Section */
+.quick-stats-section {
+  margin-bottom: 2rem;
+}
+
+.quick-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.quick-stats-card {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f7fafc;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Graph Section */
+.graph-section {
+  margin-bottom: 2rem;
+}
+
+.graph-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Dark Mode */
+.dashboard-home-container.dark {
+  background: linear-gradient(145deg, #1e3a8a 0%, #3b82f6 100%);
+}
+
+.dashboard-home-container.dark .section-title,
+.dashboard-home-container.dark .dashboard-home-title {
+  color: #e0f2fe;
+}
+
+.dashboard-home-container.dark .dashboard-home-text {
+  color: #d1d5db;
+}
+
+.dashboard-home-container.dark .stats-card,
+.dashboard-home-container.dark .quick-stats-card,
+.dashboard-home-container.dark .graph-card {
+  background: #2d3748;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-home-container.dark .stats-card p,
+.dashboard-home-container.dark .quick-stats-card p {
+  color: #e0f2fe;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .dashboard-home-container {
+    padding: 1rem;
   }
-  
+
   .dashboard-home-title {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 1rem;
+    font-size: 1.5rem;
   }
-  
+
   .dashboard-home-text {
-    font-size: 1rem;
-    color: #4b5563;
+    font-size: 0.875rem;
   }
-  
-  .dashboard-page.dark .dashboard-home-title {
-    color: #ffffff;
+
+  .section-title {
+    font-size: 1.125rem;
   }
-  
-  .dashboard-page.dark .dashboard-home-text {
-    color: #d1d5db;
+
+  .stats-grid,
+  .quick-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
+
+  .stats-card,
+  .quick-stats-card {
+    padding: 0.75rem;
+  }
+
+  .stats-card p.text-2xl {
+    font-size: 1.5rem;
+  }
+
+  .stats-card .h-5 {
+    height: 1rem;
+    width: 1rem;
+  }
+
+  .stats-card .w-14 {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .stats-card .text-sm {
+    font-size: 0.75rem;
+  }
+
+  .stats-card .w-12 {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .quick-stats-card p.text-xl {
+    font-size: 1.25rem;
+  }
+
+  .graph-card {
+    padding: 1rem;
+  }
+
+  .graph-card .h-64 {
+    height: 48rem;
+  }
+}
