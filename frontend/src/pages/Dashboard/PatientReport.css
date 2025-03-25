@@ -1,66 +1,34 @@
-/* Report Container */
 .report-container {
-  border-radius: 0.75rem;
   padding: 2rem;
-  background: linear-gradient(145deg, #f7fafc 0%, #e3f2fd 100%);
+  background: #f7fafc;
   min-height: 100vh;
   position: relative;
 }
 
-/* Subtle Background Pattern */
-.report-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('https://www.transparenttextures.com/patterns/white-wave.png');
-  opacity: 0.03;
-  z-index: 0;
-}
-
-/* Report Title */
 .report-title {
   font-size: 1.875rem;
   font-weight: 600;
   color: #1e40af;
   margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
 }
 
-/* Report Card */
 .report-card {
   border-radius: 0.75rem;
-  padding: 1.5rem;
   background: #f7fafc;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  position: relative;
-  z-index: 1;
+  padding: 1.5rem;
 }
 
-/* PDF Viewer */
 .pdf-viewer {
   margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.pdf-viewer canvas {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-}
-
-/* PDF Navigation */
 .pdf-navigation {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .nav-btn {
@@ -69,10 +37,11 @@
   color: #ffffff;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
   transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #1e40af;
 }
 
 .nav-btn:disabled {
@@ -80,16 +49,12 @@
   cursor: not-allowed;
 }
 
-.nav-btn:hover:not(:disabled) {
-  background-color: #1e40af;
-}
-
-/* Report Actions */
 .report-actions {
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative; /* Ensure buttons are positioned correctly */
+  z-index: 10; /* Ensure buttons are above other elements */
 }
 
 .download-btn {
@@ -98,10 +63,10 @@
   color: #ffffff;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease;
+  pointer-events: auto; /* Ensure clickability */
 }
 
 .download-btn:hover {
@@ -110,37 +75,34 @@
 
 .back-btn {
   padding: 0.75rem 1.5rem;
-  background-color: #6b7280;
+  background-color: #ef4444;
   color: #ffffff;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
   transition: background-color 0.3s ease;
+  pointer-events: auto; /* Ensure clickability */
+  cursor: pointer; /* Indicate clickability */
 }
 
 .back-btn:hover {
-  background-color: #4b5563;
+  background-color: #dc2626;
 }
 
-/* Loading Text */
 .loading-text {
   font-size: 1rem;
   color: #2563eb;
-  margin-bottom: 1rem;
   text-align: center;
 }
 
-/* Error Text */
 .error-text {
   font-size: 1rem;
   color: #ef4444;
-  margin-bottom: 1rem;
   text-align: center;
 }
 
 /* Dark Mode */
 .report-container.dark {
-  background: linear-gradient(145deg, #1e3a8a 0%, #3b82f6 100%);
+  background: #2d3748;
 }
 
 .report-container.dark .report-title {
@@ -148,21 +110,12 @@
 }
 
 .report-container.dark .report-card {
-  background: #2d3748;
+  background: #374151;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.report-container.dark .pdf-viewer canvas {
-  border: 1px solid #4b5563;
 }
 
 .report-container.dark .nav-btn {
   background-color: #3b82f6;
-}
-
-.report-container.dark .nav-btn:disabled {
-  background-color: #6b7280;
 }
 
 .report-container.dark .nav-btn:hover:not(:disabled) {
@@ -178,11 +131,11 @@
 }
 
 .report-container.dark .back-btn {
-  background-color: #6b7280;
+  background-color: #f87171;
 }
 
 .report-container.dark .back-btn:hover {
-  background-color: #4b5563;
+  background-color: #ef4444;
 }
 
 .report-container.dark .loading-text {
@@ -191,51 +144,4 @@
 
 .report-container.dark .error-text {
   color: #f87171;
-}
-
-/* Responsive */
-@media (max-width: 767px) {
-  .report-container {
-    padding: 1rem;
-  }
-
-  .report-title {
-    font-size: 1.5rem;
-  }
-
-  .report-card {
-    padding: 1rem;
-  }
-
-  .pdf-navigation {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .nav-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-
-  .report-actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .download-btn,
-  .back-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-
-  .download-btn svg {
-    height: 0.875rem;
-    width: 0.875rem;
-    margin-right: 0.5rem;
-  }
-
-  .loading-text,
-  .error-text {
-    font-size: 0.875rem;
-  }
 }

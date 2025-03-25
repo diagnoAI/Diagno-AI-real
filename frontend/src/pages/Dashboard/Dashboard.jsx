@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sidebar } from '../../components/Sidebar';
 import { WelcomeScreen } from '../../components/WelcomeScreen';
@@ -18,6 +18,9 @@ export function Dashboard() {
   const [showWelcome, setShowWelcome] = useState(true);
   const { user, isDarkMode, toggleDarkMode } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const location = useLocation();
+
+  console.log('Current location in Dashboard:', location.pathname);
 
   useEffect(() => {
     const handleResize = () => {

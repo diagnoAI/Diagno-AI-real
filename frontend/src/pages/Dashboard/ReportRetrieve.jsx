@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, Download, Trash2, Eye, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './ReportRetrieve.css';
@@ -10,8 +10,10 @@ export function ReportRetrieve() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Simulated patient data (replace with API call to MongoDB in production)
+  console.log('Current location in ReportRetrieve:', location.pathname);
+
   const patients = [
     { id: '12345', name: 'John Smith', date: '2025-01-12', status: 'Completed' },
     { id: 'REG6002', name: 'Jane Doe', date: '2025-03-14', status: 'Pending' },
@@ -19,13 +21,11 @@ export function ReportRetrieve() {
     { id: 'REG6004', name: 'Sarah Williams', date: '2025-03-12', status: 'In Progress' },
   ];
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setError(''); // Clear error when typing
+    setError('');
   };
 
-  // Handle search submission
   const handleSearch = async (e) => {
     e.preventDefault();
     setError('');
@@ -53,47 +53,44 @@ export function ReportRetrieve() {
     }
   };
 
-  // Handle clear search
   const handleClearSearch = () => {
     setSearchQuery('');
     setPatient(null);
     setError('');
   };
 
-  // Handle view action
   const handleView = (patientId) => {
-    console.log(`Attempting to navigate to /dashboard/report/${patientId}`); // Debug log
-    navigate(`/dashboard/report/${patientId}`);
+    const absolutePath = `/dashboard/report/${patientId}`;
+    console.log(`Attempting to navigate to absolute path: ${absolutePath}`);
+    navigate(absolutePath);
   };
 
-  // Handle download action
   const handleDownload = async (patientId) => {
-    toast.loading('Downloading report...');
+    const toastId = toast.loading('Downloading report...'); // Store the toast ID
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate download
       console.log(`Downloading report for patient ID: ${patientId}`);
-      toast.success('Report downloaded successfully!');
+      toast.success('Report downloaded successfully!', { id: toastId }); // Update the toast
     } catch (error) {
       console.error('Error downloading report:', error);
-      toast.error('Failed to download report');
+      toast.error('Failed to download report', { id: toastId }); // Update the toast on error
     }
   };
 
-  // Handle delete action with confirmation
   const handleDelete = async (patientId) => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this report? This action cannot be undone.'
     );
     if (!confirmDelete) return;
 
-    toast.loading('Deleting report...');
+    const toastId = toast.loading('Deleting report...'); // Store the toast ID
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setPatient(null);
-      toast.success('Report deleted successfully!');
+      toast.success('Report deleted successfully!', { id: toastId });
     } catch (error) {
       console.error('Error deleting report:', error);
-      toast.error('Failed to delete report');
+      toast.error('Failed to delete report', { id: toastId });
     }
   };
 

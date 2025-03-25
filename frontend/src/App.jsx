@@ -14,7 +14,7 @@ import { OTP } from './pages/Auth/OTP';
 import { SetupProfileStep1 } from './pages/Auth/SetupProfileStep1';
 import { SetupProfileStep2 } from './pages/Auth/SetupProfileStep2';
 import { SetupProfileStep3 } from './pages/Auth/SetupProfileStep3';
-import { Dashboard } from './pages/Dashboard/Dashboard.jsx';
+import { Dashboard } from './pages/Dashboard/Dashboard.jsx'; // Updated path
 import './App.css';
 
 function ScrollToTop() {
