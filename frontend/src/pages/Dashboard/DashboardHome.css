@@ -51,7 +51,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
   z-index: 1;
 }
@@ -59,7 +59,7 @@
 .stats-card {
   position: relative;
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.75rem;
   background: #f7fafc;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -73,17 +73,43 @@
 
 .quick-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
 }
 
 .quick-stats-card {
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.75rem;
   background: #f7fafc;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.5);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Recent Activity Section */
+.recent-activity-section {
+  margin-bottom: 2rem;
+}
+
+.recent-activity-card {
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  background: #f7fafc;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Risk Distribution Section */
+.risk-distribution-section {
+  margin-bottom: 2rem;
+}
+
+.risk-distribution-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Graph Section */
@@ -115,6 +141,8 @@
 
 .dashboard-home-container.dark .stats-card,
 .dashboard-home-container.dark .quick-stats-card,
+.dashboard-home-container.dark .recent-activity-card,
+.dashboard-home-container.dark .risk-distribution-card,
 .dashboard-home-container.dark .graph-card {
   background: #2d3748;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
@@ -122,7 +150,8 @@
 }
 
 .dashboard-home-container.dark .stats-card p,
-.dashboard-home-container.dark .quick-stats-card p {
+.dashboard-home-container.dark .quick-stats-card p,
+.dashboard-home-container.dark .recent-activity-card p {
   color: #e0f2fe;
 }
 
@@ -152,25 +181,16 @@
 
   .stats-card,
   .quick-stats-card {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 
-  .stats-card p.text-2xl {
-    font-size: 1.5rem;
+  .stats-card p.text-xl {
+    font-size: 1.25rem;
   }
 
-  .stats-card .h-5 {
-    height: 1rem;
-    width: 1rem;
-  }
-
-  .stats-card .w-14 {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
-  .stats-card .text-sm {
-    font-size: 0.75rem;
+  .stats-card .h-4 {
+    height: 0.875rem;
+    width: 0.875rem;
   }
 
   .stats-card .w-12 {
@@ -178,14 +198,37 @@
     height: 2rem;
   }
 
-  .quick-stats-card p.text-xl {
-    font-size: 1.25rem;
+  .stats-card .text-xs {
+    font-size: 0.65rem;
   }
 
+  .quick-stats-card p.text-lg {
+    font-size: 1rem;
+  }
+
+  .recent-activity-card {
+    padding: 0.25rem;
+  }
+
+  .recent-activity-card .py-3 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .recent-activity-card .text-sm {
+    font-size: 0.75rem;
+  }
+
+  .recent-activity-card .text-xs {
+    font-size: 0.65rem;
+  }
+
+  .risk-distribution-card,
   .graph-card {
     padding: 1rem;
   }
 
+  .risk-distribution-card .h-64,
   .graph-card .h-64 {
     height: 48rem;
   }

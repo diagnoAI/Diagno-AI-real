@@ -10,6 +10,7 @@ import { ReportRetrieve } from './ReportRetrieve';
 import { Settings } from './Settings';
 import { ReportGenerated } from './ReportGenerated';
 import { useAuth } from '../../context/AuthContext';
+import { PatientReport } from './PatientReport';
 import { Moon, Sun } from 'lucide-react';
 import './Dashboard.css';
 
@@ -50,6 +51,7 @@ export function Dashboard() {
             <Route path="report-retrieve" element={<ReportRetrieve />} />
             <Route path="settings" element={<Settings />} />
             <Route path="report-generated" element={<ReportGenerated />} />
+            <Route path="/report/:patientId" element={<PatientReport />} />
           </Routes>
         </div>
       </div>
