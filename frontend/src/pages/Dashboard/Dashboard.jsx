@@ -19,7 +19,6 @@ export function Dashboard() {
   const { user, isDarkMode, toggleDarkMode } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Sync sidebar collapse state with window size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -51,7 +50,8 @@ export function Dashboard() {
             <Route path="report-retrieve" element={<ReportRetrieve />} />
             <Route path="settings" element={<Settings />} />
             <Route path="report-generated" element={<ReportGenerated />} />
-            <Route path="/report/:patientId" element={<PatientReport />} />
+            <Route path="report/:patientId" element={<PatientReport />} />
+            <Route path="*" element={<div>404: Route not found in Dashboard</div>} />
           </Routes>
         </div>
       </div>

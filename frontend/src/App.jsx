@@ -14,7 +14,7 @@ import { OTP } from './pages/Auth/OTP';
 import { SetupProfileStep1 } from './pages/Auth/SetupProfileStep1';
 import { SetupProfileStep2 } from './pages/Auth/SetupProfileStep2';
 import { SetupProfileStep3 } from './pages/Auth/SetupProfileStep3';
-import { Dashboard } from './pages/Dashboard';
+import { Dashboard } from './pages/Dashboard/Dashboard.jsx';
 import './App.css';
 
 function ScrollToTop() {
@@ -33,33 +33,88 @@ function App() {
           <Routes>
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route
-              path="*"
+              path="/"
               element={
                 <>
-                  <Routes>
-                    <Route path="/dashboard/*" element={<Dashboard />} />
-                    <Route
-                      path="/"
-                      element={<>
-                        <Navbar />
-                        <ScrollToTop />
-                        <Landing />
-                      </>}
-                    />
-                    <Route path="/features" element={<><Navbar /><ScrollToTop /><FeaturesPage /></>} />
-                    <Route path="/workflow" element={<><Navbar /><ScrollToTop /><WorkflowPage /></>} />
-                    <Route path="/about" element={<><Navbar /><ScrollToTop /><AboutPage /></>} />
-                    <Route path="/contact" element={<><Navbar /><ScrollToTop /><ContactPage /></>} />
-                    <Route path="/login" element={<><Navbar /><ScrollToTop /><Login /></>} />
-                    <Route path="/signup" element={<><Navbar /><ScrollToTop /><Signup /></>} />
-                    <Route path="/otp" element={<><Navbar /><ScrollToTop /><OTP /></>} />
-                    <Route path="/setup-profile/step1" element={<SetupProfileStep1 />} />
-                    <Route path="/setup-profile/step2" element={<SetupProfileStep2 />} />
-                    <Route path="/setup-profile/step3" element={<SetupProfileStep3 />} />
-                  </Routes>
+                  <Navbar />
+                  <ScrollToTop />
+                  <Landing />
                 </>
               }
             />
+            <Route
+              path="/features"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <FeaturesPage />
+                </>
+              }
+            />
+            <Route
+              path="/workflow"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <WorkflowPage />
+                </>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <AboutPage />
+                </>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <ContactPage />
+                </>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <Login />
+                </>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <Signup />
+                </>
+              }
+            />
+            <Route
+              path="/otp"
+              element={
+                <>
+                  <Navbar />
+                  <ScrollToTop />
+                  <OTP />
+                </>
+              }
+            />
+            <Route path="/setup-profile/step1" element={<SetupProfileStep1 />} />
+            <Route path="/setup-profile/step2" element={<SetupProfileStep2 />} />
+            <Route path="/setup-profile/step3" element={<SetupProfileStep3 />} />
           </Routes>
           <Toaster position="top-right" />
         </div>

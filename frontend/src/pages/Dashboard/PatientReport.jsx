@@ -1,96 +1,144 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Download } from 'lucide-react';
-import { jsPDF } from 'jspdf';
+import { Document, Page, pdfjs } from 'react-pdf';
+import { Download, Printer, ZoomIn, ZoomOut } from 'lucide-react';
 import './PatientReport.css';
+
+// Set up the worker for react-pdf (using a CDN for simplicity)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export function PatientReport() {
   const { patientId } = useParams();
   const navigate = useNavigate();
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [scale, setScale] = useState(1.0); // For zoom functionality
+  const [report, setReport] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Simulated report data (replace with API call in production)
+  // Simulated report data with PDF URL (replace with API call to MongoDB in production)
   const reports = {
     '12345': {
       id: '12345',
       name: 'John Smith',
-      scanDate: '2025-01-12',
-      reportGenerated: '2025-01-13 22:27:40',
-      kidneyDetected: 'Yes',
-      numberOfStones: 1,
-      ctScanImage: null, // Placeholder for CT scan image (replace with actual image URL if available)
-      hydronephrosisGrade: 'Grade 2',
-      recommendations: 'Consult a nephrologist for treatment options.',
+      pdfUrl: 'http://example.com/reports/12345.pdf', // Placeholder for PDF URL
     },
     REG6002: {
       id: 'REG6002',
       name: 'Jane Doe',
-      scanDate: '2025-03-14',
-      reportGenerated: '2025-03-15 10:00:00',
-      kidneyDetected: 'No',
-      numberOfStones: 0,
-      ctScanImage: null,
-      hydronephrosisGrade: 'None',
-      recommendations: 'Maintain a healthy diet and follow up in 6 months.',
+      pdfUrl: 'http://example.com/reports/REG6002.pdf',
     },
     REG6003: {
       id: 'REG6003',
       name: 'Mike Johnson',
-      scanDate: '2025-03-13',
-      reportGenerated: '2025-03-14 09:30:00',
-      kidneyDetected: 'Yes',
-      numberOfStones: 1,
-      ctScanImage: null,
-      hydronephrosisGrade: 'Grade 1',
-      recommendations: 'Pain management and follow-up in 2 weeks.',
+      pdfUrl: 'http://example.com/reports/REG6003.pdf',
     },
     REG6004: {
       id: 'REG6004',
       name: 'Sarah Williams',
-      scanDate: '2025-03-12',
-      reportGenerated: '2025-03-13 15:45:00',
-      kidneyDetected: 'Yes',
-      numberOfStones: 0,
-      ctScanImage: null,
-      hydronephrosisGrade: 'Inconclusive',
-      recommendations: 'Further scans required to confirm diagnosis.',
+      pdfUrl: 'http://example.com/reports/REG6004.pdf',
     },
   };
 
-  const report = reports[patientId] || null;
+  useEffect(() => {
+    const fetchReport = async () => {
+      setLoading(true);
+      try {
+        // Simulate API call to fetch report
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const foundReport = reports[patientId];
+        if (foundReport) {
+          setReport(foundReport);
+        } else {
+          setError('Report not found for patient ID: ' + patientId);
+        }
+      } catch (err) {
+        setError('Error fetching report');
+        console.error('Error:', err);
+      } finally {
+        setLoading(false);
+      }
 
-  // Handle download action (generate PDF)
-  const handleDownload = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Diagno Genix AI Report', 20, 20);
-    doc.setFontSize(12);
-    doc.text(`Patient ID: ${report.id}`, 20, 30);
-    doc.text(`Scan Date: ${report.scanDate}`, 20, 40);
-    doc.text(`Report Generated: ${report.reportGenerated}`, 20, 50);
-    doc.setFontSize(14);
-    doc.text('Findings:', 20, 70);
-    doc.setFontSize(12);
-    doc.text(`Kidney Detected: ${report.kidneyDetected}`, 20, 80);
-    doc.text(`Number of Stones: ${report.numberOfStones}`, 20, 90);
-    doc.text(`Hydronephrosis Grade: ${report.hydronephrosisGrade}`, 20, 100);
-    doc.setFontSize(14);
-    doc.text('Recommendations:', 20, 120);
-    doc.setFontSize(12);
-    doc.text(report.recommendations, 20, 130, { maxWidth: 170 });
-    doc.text('Page 1', 20, 280);
-    doc.save(`report-${patientId}.pdf`);
+      // Example API call (uncomment and adjust when backend is ready):
+      /*
+      try {
+        const response = await fetch(`/api/reports/${patientId}`);
+        const data = await response.json();
+        if (data.report) {
+          setReport(data.report);
+        } else {
+          setError('Report not found for patient ID: ' + patientId);
+        }
+      } catch (err) {
+        setError('Error fetching report');
+        console.error('Error:', err);
+      } finally {
+        setLoading(false);
+      }
+      */
+    };
+    fetchReport();
+  }, [patientId]);
+
+  // Handle PDF load success
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
   };
+
+  // Handle download action
+  const handleDownload = () => {
+    if (report.pdfUrl) {
+      const link = document.createElement('a');
+      link.href = report.pdfUrl;
+      link.download = `report-${patientId}.pdf`;
+      link.click();
+    } else {
+      console.log('PDF URL not available');
+    }
+  };
+
+  // Handle print action
+  const handlePrint = () => {
+    window.print();
+  };
+
+  // Handle zoom actions
+  const zoomIn = () => setScale(scale + 0.1);
+  const zoomOut = () => setScale(scale > 0.5 ? scale - 0.1 : scale);
 
   // Handle back navigation
   const handleBack = () => {
-    navigate('/retrieve');
+    navigate('/dashboard/report-retrieve');
   };
 
-  if (!report) {
+  // Handle page navigation
+  const goToPreviousPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(pageNumber - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (pageNumber < numPages) {
+      setPageNumber(pageNumber + 1);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="report-container">
         <h2 className="report-title">Patient Report</h2>
-        <p className="error-text">Report not found for patient ID: {patientId}</p>
+        <p className="loading-text">Loading report...</p>
+      </div>
+    );
+  }
+
+  if (error || !report) {
+    return (
+      <div className="report-container">
+        <h2 className="report-title">Patient Report</h2>
+        <p className="error-text">{error || 'Report not found'}</p>
         <button onClick={handleBack} className="back-btn">
           Back to Search
         </button>
@@ -100,55 +148,55 @@ export function PatientReport() {
 
   return (
     <div className="report-container">
-      <h2 className="report-title">Patient Report</h2>
+      <h2 className="report-title">Patient Report - {report.name}</h2>
       <div className="report-card neumorphic">
-        <div className="report-content">
-          <h3 className="report-content-title">Diagno Genix AI Report</h3>
-          <div className="report-content-item">
-            <span className="label">Patient ID:</span>
-            <span>{report.id}</span>
-          </div>
-          <div className="report-content-item">
-            <span className="label">Scan Date:</span>
-            <span>{report.scanDate}</span>
-          </div>
-          <div className="report-content-item">
-            <span className="label">Report Generated:</span>
-            <span>{report.reportGenerated}</span>
-          </div>
-          <h4 className="report-subheading">Findings:</h4>
-          <div className="report-content-item">
-            <span className="label">Kidney Detected:</span>
-            <span>{report.kidneyDetected}</span>
-          </div>
-          <div className="report-content-item">
-            <span className="label">Number of Stones:</span>
-            <span>{report.numberOfStones}</span>
-          </div>
-          <div className="report-content-item">
-            <span className="label">CT Scan Image:</span>
-            <span>
-              {report.ctScanImage ? (
-                <img src={report.ctScanImage} alt="CT Scan" className="ct-scan-image" />
-              ) : (
-                'Not Available'
-              )}
-            </span>
-          </div>
-          <div className="report-content-item">
-            <span className="label">Hydronephrosis Grade:</span>
-            <span>{report.hydronephrosisGrade}</span>
-          </div>
-          <h4 className="report-subheading">Recommendations:</h4>
-          <div className="report-content-item">
-            <span className="label"></span>
-            <span>{report.recommendations}</span>
+        <div className="pdf-viewer">
+          <Document
+            file={report.pdfUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={(error) => {
+              console.error('Error loading PDF:', error);
+              setError('Failed to load PDF');
+            }}
+          >
+            <Page pageNumber={pageNumber} scale={scale} />
+          </Document>
+          <div className="pdf-navigation">
+            <button
+              onClick={goToPreviousPage}
+              disabled={pageNumber <= 1}
+              className="nav-btn"
+            >
+              Previous
+            </button>
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+            <button
+              onClick={goToNextPage}
+              disabled={pageNumber >= numPages}
+              className="nav-btn"
+            >
+              Next
+            </button>
+            <button onClick={zoomOut} className="nav-btn">
+              <ZoomOut className="h-4 w-4 mr-1" />
+              Zoom Out
+            </button>
+            <button onClick={zoomIn} className="nav-btn">
+              <ZoomIn className="h-4 w-4 mr-1" />
+              Zoom In
+            </button>
           </div>
         </div>
         <div className="report-actions">
           <button onClick={handleDownload} className="download-btn">
             <Download className="h-5 w-5 mr-2" />
             Download Report
+          </button>
+          <button onClick={handlePrint} className="download-btn">
+            <Printer className="h-5 w-5 mr-2" />
+            Print Report
           </button>
           <button onClick={handleBack} className="back-btn">
             Back to Search
