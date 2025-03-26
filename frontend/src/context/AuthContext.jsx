@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   };
 
   const signup = async ({ email, password, name }) => {
-    setUser({ email, name, isVerified: false });
+    setUser({ email,password, name, isVerified: false });
   };
 
   const verifyOTP = async (otp) => {

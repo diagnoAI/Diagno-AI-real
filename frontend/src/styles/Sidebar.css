@@ -18,15 +18,27 @@
 
 .sidebar.collapsed {
   width: 4rem;
-  padding: 1rem 0; /* Reduce padding for centering */
-  align-items: center; /* Center all content horizontally */
+  padding: 1rem 0;
+  align-items: center;
 }
 
 .sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Ensure header spans full width */
+  width: 100%;
+}
+
+.sidebar.collapsed .sidebar-header {
+  flex-direction: column; /* Stack buttons vertically in collapsed state */
+  gap: 1rem; /* Add space between back button and hamburger button */
+  align-items: center; /* Center both buttons */
+}
+
+.sidebar-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Space between back button and h4 */
 }
 
 .sidebar-back-button {
@@ -94,7 +106,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 100%; /* Ensure links span full width */
+  width: 100%;
 }
 
 .sidebar-link {
@@ -109,8 +121,8 @@
 }
 
 .sidebar.collapsed .sidebar-link {
-  padding: 0.75rem 0; /* Center icons vertically */
-  justify-content: center; /* Center icons horizontally */
+  padding: 0.75rem 0;
+  justify-content: center;
 }
 
 .sidebar-link:hover {
@@ -164,11 +176,10 @@
 }
 
 .h4 {
-  position: absolute;
-  left: 60px;
   font-size: 1rem;
   font-weight: 600;
   color: #111827;
+  margin: 0; /* Remove default margin for better alignment */
 }
 
 .dashboard-page.dark .h4 {
@@ -179,56 +190,4 @@
 .dashboard-page.dark .sidebar {
   background: rgba(37, 99, 235, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 4rem;
-    padding: 1rem 0; /* Consistent with collapsed state */
-    align-items: center; /* Center all content */
-  }
-
-  .sidebar.collapsed {
-    width: 4rem;
-  }
-
-  .sidebar:not(.collapsed) {
-    width: 16rem;
-    padding: 2rem 1rem; /* Restore padding when expanded */
-    align-items: flex-start; /* Align left when expanded */
-  }
-
-  .sidebar-toggle-button {
-    display: block;
-  }
-
-  .h4 {
-    display: none;
-  }
-
-  .sidebar:not(.collapsed) .h4 {
-    display: block;
-  }
-
-  .sidebar.collapsed .sidebar-header {
-    justify-content: center; /* Center back and toggle buttons */
-    flex-direction: column; /* Stack vertically in collapsed mode */
-    gap: 1rem;
-  }
-
-  .sidebar.collapsed .sidebar-back-button,
-  .sidebar.collapsed .sidebar-toggle-button {
-    padding: 0.5rem 0; /* Adjust padding for centering */
-  }
-}
-
-@media (min-width: 769px) {
-  .sidebar {
-    width: 16rem;
-  }
-
-  .sidebar-toggle-button {
-    display: none;
-  }
 }

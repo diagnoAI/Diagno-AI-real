@@ -16,6 +16,7 @@ import { SetupProfileStep2 } from './pages/Auth/SetupProfileStep2';
 import { SetupProfileStep3 } from './pages/Auth/SetupProfileStep3';
 import { Dashboard } from './pages/Dashboard/Dashboard.jsx'; // Updated path
 import './App.css';
+import { SetupProfile } from './pages/Auth/SetupProfile.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -112,11 +113,12 @@ function App() {
                 </>
               }
             />
+            <Route path='/setupprofile' element={<SetupProfile/>}/>
             <Route path="/setup-profile/step1" element={<SetupProfileStep1 />} />
             <Route path="/setup-profile/step2" element={<SetupProfileStep2 />} />
             <Route path="/setup-profile/step3" element={<SetupProfileStep3 />} />
           </Routes>
-          <Toaster position="top-right" />
+          <Toaster position="top-center"/>
         </div>
       </AuthProvider>
     </Router>

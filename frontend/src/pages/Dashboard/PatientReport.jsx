@@ -207,4 +207,3 @@ export function PatientReport() {
 
 
 
-// analyze all my past conversation in this chat about my project then tell our front end is over first analyze and make folder strucuture of all you given codes lets see

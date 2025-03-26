@@ -10,22 +10,8 @@ export function Sidebar({ onToggle }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsCollapsed(true);
-      } else {
-        setIsCollapsed(false);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
     if (onToggle) {
-      onToggle(isCollapsed); // Notify parent of collapse state
+      onToggle(isCollapsed);
     }
   }, [isCollapsed, onToggle]);
 
@@ -39,13 +25,15 @@ export function Sidebar({ onToggle }) {
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        <button
-          className="hover:bg-gray-100 sidebar-back-button"
-          onClick={() => navigate('/')}
-        >
-          <ArrowLeft className="sidebar-back-icon" />
-        </button>
-        {!isCollapsed && <h4 className="h4">HOME</h4>}
+        <div className="sidebar-header-left">
+          <button
+            className="hover:bg-gray-100 sidebar-back-button"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="sidebar-back-icon" />
+          </button>
+          {!isCollapsed && <h4 className="h4">HOME</h4>}
+        </div>
         <button
           className="hover:bg-gray-100 sidebar-toggle-button"
           onClick={toggleSidebar}

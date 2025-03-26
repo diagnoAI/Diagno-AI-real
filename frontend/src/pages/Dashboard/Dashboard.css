@@ -1,6 +1,7 @@
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
+  flex-direction: column; /* Allow bottom bar to stack */
 }
 
 .dashboard-content-wrapper {
@@ -9,68 +10,168 @@
 }
 
 .dashboard-content-wrapper.sidebar-expanded {
-  margin-left: 16rem; /* Matches expanded sidebar width */
+  margin-left: 16rem;
 }
 
 .dashboard-content-wrapper.sidebar-collapsed {
-  margin-left: 4rem; /* Matches collapsed sidebar width */
+  margin-left: 4rem;
 }
 
-.dashboard-header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-  background: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-page.dark .dashboard-header {
-  background: #1f2937;
-}
-
-.dashboard-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.toggle-button {
-  background: none;
-  border: none;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.toggle-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #2563eb;
-}
-
-.dashboard-page.dark .toggle-icon {
-  color: #d1d5db;
-}
-
-.dashboard-profile-image {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  object-fit: cover;
+.dashboard-content-wrapper.mobile {
+  margin-left: 0; /* No sidebar on mobile */
+  margin-bottom: 4rem; /* Space for bottom nav */
 }
 
 .dashboard-main {
   padding: 2rem;
 }
 
+/* Top Bar for Mobile */
+.dashboard-top-bar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.dashboard-wrapper.dark .dashboard-top-bar {
+  background: #1f2937;
+}
+
+.top-bar-back-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.top-bar-back-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #2563eb;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.top-bar-hamburger {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.top-bar-hamburger-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #2563eb;
+}
+
+.top-bar-profile-image {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 101;
+}
+
+.dashboard-wrapper.dark .dropdown-menu {
+  background: #1f2937;
+}
+
+.dropdown-item {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-wrapper.dark .dropdown-item {
+  color: #d1d5db;
+}
+
+/* Bottom Navigation Bar for Mobile */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 0;
+  z-index: 100;
+}
+
+.dashboard-wrapper.dark .bottom-nav {
+  background: #1f2937;
+}
+
+.bottom-nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.bottom-nav-item:hover {
+  color: #2563eb;
+}
+
+.dashboard-wrapper.dark .bottom-nav-item {
+  color: #d1d5db;
+}
+
+.bottom-nav-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-  .dashboard-content-wrapper.sidebar-expanded {
-    margin-left: 16rem; /* Full sidebar width when toggled */
+  .dashboard-top-bar {
+    display: flex;
   }
 
-  .dashboard-content-wrapper.sidebar-collapsed {
-    margin-left: 4rem; /* Collapsed width */
+  .bottom-nav {
+    display: flex;
+  }
+
+  .dashboard-content-wrapper.mobile {
+    padding-top: 3rem; /* Space for top bar */
   }
 }
 
@@ -80,7 +181,6 @@
   }
 
   .dashboard-content-wrapper.sidebar-collapsed {
-    margin-left: 16rem; /* Desktop stays expanded by default */
+    margin-left: 4rem;
   }
 }
-

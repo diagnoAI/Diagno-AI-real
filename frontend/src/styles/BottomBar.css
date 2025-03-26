@@ -1,0 +1,89 @@
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    z-index: 100;
+  }
+  
+  .bottom-bar-item-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .bottom-bar-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    color: #4b5563;
+    text-decoration: none;
+  }
+  
+  .bottom-bar-item:hover {
+    color: #2563eb;
+  }
+  
+  .bottom-bar-item.active {
+    color: #2563eb; /* Highlight the active route */
+  }
+  
+  .bottom-bar-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  /* Tooltip Styles */
+  .bottom-bar-tooltip {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 0.5rem;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 101;
+  }
+  
+  /* Dark Mode */
+  .bottom-bar.dark {
+    background: #1f2937;
+  }
+  
+  .bottom-bar.dark .bottom-bar-item {
+    color: #d1d5db;
+  }
+  
+  .bottom-bar.dark .bottom-bar-item:hover {
+    color: #ffffff;
+  }
+  
+  .bottom-bar.dark .bottom-bar-item.active {
+    color: #ffffff; /* Highlight the active route in dark mode */
+  }
+  
+  .bottom-bar.dark .bottom-bar-tooltip {
+    background: #1f2937;
+    color: #ffffff;
+    border: 1px solid #d1d5db;
+  }
+  
+  /* Hover Support for Desktop */
+  @media (min-width: 769px) {
+    .bottom-bar-item-wrapper:hover .bottom-bar-tooltip {
+      display: block;
+    }
+  
+    .bottom-bar-tooltip {
+      display: none;
+    }
+  }
