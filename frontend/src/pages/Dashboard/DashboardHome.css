@@ -66,6 +66,26 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Tooltip for Stats Cards */
+.stats-tooltip {
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  display: none;
+  z-index: 10;
+}
+
+.stats-card:hover .stats-tooltip {
+  display: block;
+}
+
 /* Quick Stats Section */
 .quick-stats-section {
   margin-bottom: 2rem;
@@ -152,6 +172,26 @@
 .dashboard-home-container.dark .stats-card p,
 .dashboard-home-container.dark .quick-stats-card p,
 .dashboard-home-container.dark .recent-activity-card p {
+  color: #e0f2fe;
+}
+
+/* Dark Mode for Tooltips */
+.dashboard-home-container.dark .stats-tooltip {
+  background: #1e3a8a;
+  color: #e0f2fe;
+  border: 1px solid #d1d5db;
+}
+
+/* Dark Mode for Detection Progress Circle */
+.dashboard-home-container.dark .text-blue-100 {
+  color: #4b5563;
+}
+
+.dashboard-home-container.dark .text-blue-600 {
+  color: #60a5fa;
+}
+
+.dashboard-home-container.dark .text-blue-900 {
   color: #e0f2fe;
 }
 

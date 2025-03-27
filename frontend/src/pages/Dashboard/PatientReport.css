@@ -38,6 +38,8 @@
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .nav-btn:hover:not(:disabled) {
@@ -53,8 +55,8 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  position: relative; /* Ensure buttons are positioned correctly */
-  z-index: 10; /* Ensure buttons are above other elements */
+  position: relative;
+  z-index: 10;
 }
 
 .download-btn {
@@ -66,7 +68,7 @@
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease;
-  pointer-events: auto; /* Ensure clickability */
+  pointer-events: auto;
 }
 
 .download-btn:hover {
@@ -80,12 +82,19 @@
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: background-color 0.3s ease;
-  pointer-events: auto; /* Ensure clickability */
-  cursor: pointer; /* Indicate clickability */
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .back-btn:hover {
   background-color: #dc2626;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .loading-text {
@@ -144,4 +153,8 @@
 
 .report-container.dark .error-text {
   color: #f87171;
+}
+
+.report-container.dark .loading-spinner svg {
+  color: #3b82f6;
 }

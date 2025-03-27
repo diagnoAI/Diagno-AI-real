@@ -13,11 +13,22 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  Filler,
 } from 'chart.js';
 import './DashboardHome.css';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
+// Register Chart.js components, including Filler
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  Filler
+);
 
 // Detection Progress Circle
 const DetectionProgress = ({ percentage }) => (
@@ -49,13 +60,13 @@ const DetectionProgress = ({ percentage }) => (
   </div>
 );
 
-// Initial stats data (removed images)
+// Initial stats data with tooltip text
 const initialStats = [
-  { label: 'Patients Today', value: 32, icon: Users, color: 'blue-600' },
-  { label: 'Kidney Stone Scans', value: 15, icon: FileText, color: 'blue-500' },
-  { label: 'Detection Accuracy', value: 92, icon: HeartPulse, color: 'blue-600', isProgress: true },
-  { label: 'High Risk Patients', value: 8, icon: Activity, color: 'blue-500' },
-  { label: 'Appointments', value: 10, icon: Calendar, color: 'blue-400' },
+  { label: 'Patients Today', value: 32, icon: Users, color: 'blue-600', tooltip: 'Patients seen today' },
+  { label: 'Kidney Stone Scans', value: 15, icon: FileText, color: 'blue-500', tooltip: 'Scans performed today' },
+  { label: 'Detection Accuracy', value: 92, icon: HeartPulse, color: 'blue-600', isProgress: true, tooltip: 'Accuracy of detection model' },
+  { label: 'High Risk Patients', value: 8, icon: Activity, color: 'blue-500', tooltip: 'Patients at high risk' },
+  { label: 'Appointments', value: 10, icon: Calendar, color: 'blue-400', tooltip: 'Scheduled appointments' },
 ];
 
 // Quick stats data
@@ -79,7 +90,7 @@ const riskDistributionData = {
   labels: ['Low Risk', 'Medium Risk', 'High Risk'],
   datasets: [
     {
-      data: [60, 30, 10], // Example distribution: 60% low, 30% medium, 10% high
+      data: [60, 30, 10],
       backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
       borderWidth: 1,
       borderColor: '#ffffff',
@@ -88,7 +99,7 @@ const riskDistributionData = {
 };
 
 export function DashboardHome() {
-  const { user } = useAuth();
+  const { user, isDarkMode } = useAuth();
   const [stats, setStats] = useState(initialStats);
   const [trendData, setTrendData] = useState(initialTrendData);
 
@@ -120,11 +131,11 @@ export function DashboardHome() {
       // Update trend data
       setTrendData((prevData) => {
         const newData = [...prevData];
-        newData.shift(); // Remove the oldest data point
-        newData.push(Math.floor(Math.random() * 10 + 10)); // Add a new random data point (10-20)
+        newData.shift();
+        newData.push(Math.floor(Math.random() * 10 + 10));
         return newData;
       });
-    }, 5000); // Update every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -151,15 +162,36 @@ export function DashboardHome() {
     },
   };
 
-  // Graph data (Line chart)
+  // Section animation for charts
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: 'easeOut',
+      },
+    },
+  };
+
+  // Graph data (Line chart) with gradient fill
   const graphData = {
     labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
     datasets: [
       {
         label: 'Kidney Stone Scans',
         data: trendData,
-        borderColor: '#2563eb',
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        borderColor: isDarkMode ? '#ffffff' : '#2563eb',
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return;
+          const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+          gradient.addColorStop(0, isDarkMode ? 'rgba(255, 255, 255, 0)' : 'rgba(37, 99, 235, 0)');
+          gradient.addColorStop(1, isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(37, 99, 235, 0.2)');
+          return gradient;
+        },
         fill: true,
         tension: 0.4,
       },
@@ -174,7 +206,7 @@ export function DashboardHome() {
         display: false,
       },
       tooltip: {
-        backgroundColor: '#1e3a8a',
+        backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a',
         titleColor: '#ffffff',
         bodyColor: '#e0f2fe',
       },
@@ -185,22 +217,35 @@ export function DashboardHome() {
           display: false,
         },
         ticks: {
-          color: '#6b7280',
+          color: isDarkMode ? '#d1d5db' : '#6b7280',
         },
       },
       y: {
         grid: {
-          color: '#e5e7eb',
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb',
         },
         ticks: {
-          color: '#6b7280',
+          color: isDarkMode ? '#d1d5db' : '#6b7280',
           beginAtZero: true,
         },
       },
     },
   };
 
-  // Pie chart options
+  // Risk distribution data with dark mode support
+  const riskDistributionData = {
+    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+    datasets: [
+      {
+        data: [60, 30, 10],
+        backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
+        borderWidth: 1,
+        borderColor: isDarkMode ? '#1f2937' : '#ffffff',
+      },
+    ],
+  };
+
+  // Pie chart options with dark mode support
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -208,14 +253,14 @@ export function DashboardHome() {
       legend: {
         position: 'bottom',
         labels: {
-          color: '#1e40af',
+          color: isDarkMode ? '#d1d5db' : '#1e40af',
           font: {
             size: 12,
           },
         },
       },
       tooltip: {
-        backgroundColor: '#1e3a8a',
+        backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a',
         titleColor: '#ffffff',
         bodyColor: '#e0f2fe',
       },
@@ -223,7 +268,7 @@ export function DashboardHome() {
   };
 
   return (
-    <div className="dashboard-home-container">
+    <div className={`dashboard-home-container ${isDarkMode ? 'dark' : ''}`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -273,6 +318,7 @@ export function DashboardHome() {
                   <stat.icon className={`h-4 w-4 text-${stat.color}`} />
                 </div>
               </div>
+              <span className="stats-tooltip">{stat.tooltip}</span>
             </motion.div>
           ))}
         </div>
@@ -317,25 +363,35 @@ export function DashboardHome() {
         </div>
       </div>
 
-      {/* Risk Distribution Section */}
-      <div className="risk-distribution-section">
+      {/* Risk Distribution Section with Animation */}
+      <motion.div
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+        className="risk-distribution-section"
+      >
         <h3 className="section-title">Patient Risk Distribution</h3>
         <div className="risk-distribution-card neumorphic">
           <div className="relative h-64">
             <Pie data={riskDistributionData} options={pieOptions} />
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Graph Section */}
-      <div className="graph-section">
+      {/* Graph Section with Animation */}
+      <motion.div
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+        className="graph-section"
+      >
         <h3 className="section-title">Kidney Stone Scans (Last 7 Days)</h3>
         <div className="graph-card neumorphic">
           <div className="relative h-64">
             <Line data={graphData} options={graphOptions} />
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

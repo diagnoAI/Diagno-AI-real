@@ -2,16 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Download, Printer, ZoomIn, ZoomOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import './PatientReport.css';
 
-// Use the local Web Worker script
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+// Dynamically set the workerSrc using pdfjs-dist
+import * as pdfjsLib from 'pdfjs-dist';
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
+// Alternatively, if you prefer to use the local file, ensure it's in public:
+// pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 export function PatientReport() {
   console.log('PatientReport component rendered');
 
   const { patientId } = useParams();
   const navigate = useNavigate();
+  const { isDarkMode } = useAuth();
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.0);
@@ -25,7 +30,7 @@ export function PatientReport() {
     '12345': {
       id: '12345',
       name: 'John Smith',
-      pdfUrl: '../../../public/reports/fromMongoDB.pdf',
+      pdfUrl: '/reports/fromMongoDB.pdf',
     },
     REG6002: {
       id: 'REG6002',
@@ -53,13 +58,6 @@ export function PatientReport() {
         const foundReport = reports[patientId];
         console.log('Found report:', foundReport);
         if (foundReport) {
-          // Test the PDF URL by fetching it
-          console.log('Testing PDF URL:', foundReport.pdfUrl);
-          const response = await fetch(foundReport.pdfUrl, { method: 'HEAD' });
-          if (!response.ok) {
-            throw new Error(`PDF URL is not accessible: ${response.status} ${response.statusText}`);
-          }
-          console.log('PDF URL is accessible');
           setReport(foundReport);
         } else {
           setError('Report not found for patient ID: ' + patientId);
@@ -80,7 +78,7 @@ export function PatientReport() {
   };
 
   const handleDownload = () => {
-    if (report.pdfUrl) {
+    if (report?.pdfUrl) {
       console.log('Downloading PDF from URL:', report.pdfUrl);
       const link = document.createElement('a');
       link.href = report.pdfUrl;
@@ -123,9 +121,31 @@ export function PatientReport() {
   if (loading) {
     console.log('Rendering loading state');
     return (
-      <div className="report-container">
+      <div className={`report-container ${isDarkMode ? 'dark' : ''}`}>
         <h2 className="report-title">Patient Report</h2>
-        <p className="loading-text">Loading report...</p>
+        <div className="loading-spinner">
+          <svg
+            className="animate-spin h-8 w-8 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
+          </svg>
+          <p className="loading-text">Loading report...</p>
+        </div>
       </div>
     );
   }
@@ -133,7 +153,7 @@ export function PatientReport() {
   if (error || !report) {
     console.log('Rendering error state, error:', error);
     return (
-      <div className="report-container">
+      <div className={`report-container ${isDarkMode ? 'dark' : ''}`}>
         <h2 className="report-title">Patient Report</h2>
         <p className="error-text">{error || 'Report not found'}</p>
         <button onClick={handleBack} className="back-btn">
@@ -145,7 +165,7 @@ export function PatientReport() {
 
   console.log('Rendering report view, report:', report);
   return (
-    <div className="report-container">
+    <div className={`report-container ${isDarkMode ? 'dark' : ''}`}>
       <h2 className="report-title">Patient Report - {report.name}</h2>
       <div className="report-card neumorphic">
         <div className="pdf-viewer">
@@ -168,7 +188,8 @@ export function PatientReport() {
               Previous
             </button>
             <p>
-              Page {pageNumber} of {numPages}
+              Page {pageNumber} of {numPages || '...'}{' '}
+              {numPages ? '' : '(Loading pages)'}
             </p>
             <button
               onClick={goToNextPage}
@@ -204,6 +225,3 @@ export function PatientReport() {
     </div>
   );
 }
-
-
-
