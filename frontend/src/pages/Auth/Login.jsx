@@ -8,11 +8,11 @@ import './Login.css';
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth(); // Add user to detect logout
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
-  // Reset form fields when user is null (after logout)
   useEffect(() => {
     if (!user) {
       setEmail('');
@@ -20,15 +20,28 @@ export function Login() {
     }
   }, [user]);
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setIsLoading(true);
     try {
       await login({ email, password });
       toast.success('Login successful!');
-      navigate('/');
+      navigate('/'); // Redirect to dashboard or home page
     } catch (error) {
-      toast.error('Login failed');
+      toast.error(error.message || 'Login failed. Please try again.');
+      setErrors({ email: 'Invalid email or password' });
     } finally {
       setIsLoading(false);
     }
@@ -48,24 +61,24 @@ export function Login() {
             <input
               id="email"
               type="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-input focus:border-blue-500 focus:ring-blue-500"
+              className={`form-input ${errors.email ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
               disabled={isLoading}
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
             <input
               id="password"
               type="password"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-input focus:border-blue-500 focus:ring-blue-500"
+              className={`form-input ${errors.password ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
               disabled={isLoading}
             />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
           <button
             type="submit"

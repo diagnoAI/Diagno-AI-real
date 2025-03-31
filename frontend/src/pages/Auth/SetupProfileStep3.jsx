@@ -1,38 +1,49 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { useAuth } from '../../context/AuthContext';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../../utils/cropImage';
 import toast from 'react-hot-toast';
 import './SetupProfileStep3.css';
 
 export function SetupProfileStep3() {
   const [profileImage, setProfileImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [isCropping, setIsCropping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { updateProfile } = useAuth();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
     maxFiles: 1,
     onDrop: (acceptedFiles) => {
-      setProfileImage(acceptedFiles[0]);
+      const file = acceptedFiles[0];
+      setProfileImage(file);
+      setPreview(URL.createObjectURL(file)); // Show preview first
     },
   });
+
+  const onCropComplete = useCallback(async (_, croppedAreaPixels) => {
+    const cropped = await getCroppedImg(preview, croppedAreaPixels);
+    setCroppedImage(cropped);
+  }, [preview]);
+
+  const handleCropConfirm = () => {
+    setIsCropping(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await updateProfile({
-        name: state.name,
-        hospital: state.hospital,
-        profileImage: profileImage ? URL.createObjectURL(profileImage) : null,
-      });
       toast.success('Profile setup complete!');
-      navigate('/'); // Redirect to Landing page
+      navigate('/login');
     } catch (error) {
       toast.error('Failed to setup profile');
     } finally {
@@ -42,34 +53,99 @@ export function SetupProfileStep3() {
 
   return (
     <div className="setup-step3-page">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
         className="setup-step3-container glass"
       >
         <h2 className="setup-step3-title">Upload Profile Photo</h2>
         <form className="setup-step3-form" onSubmit={handleSubmit}>
-          <div
-            {...getRootProps()}
-            className="dropzone hover:border-blue-500"
+          
+          {/* Profile Picture Preview */}
+          <motion.div 
+            className="profile-picture-container"
+            whileHover={{ scale: 1.1 }}
           >
-            <input {...getInputProps()} />
-            <div className="dropzone-content">
-              <Upload className="dropzone-icon" />
-              <div className="dropzone-text">
-                <label className="dropzone-label hover:text-blue-500">
-                  {isDragActive ? 'Drop the file here' : 'Upload a profile photo'}
-                </label>
+            {croppedImage ? (
+              <img src={croppedImage} alt="Profile Preview" className="profile-picture" />
+            ) : preview ? (
+              <img src={preview} alt="Profile Preview" className="profile-picture" />
+            ) : (
+              <motion.div {...getRootProps()} className="dropzone" whileHover={{ scale: 1.05 }}>
+                <input {...getInputProps()} />
+                <Upload className="dropzone-icon" />
+                <p>{isDragActive ? 'Drop the file here' : 'Upload Profile Picture'}</p>
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Crop Button */}
+          {preview && (
+            <motion.button 
+              type="button" 
+              className="crop-button" 
+              onClick={() => setIsCropping(true)}
+              whileHover={{ scale: 1.1 }}
+            >
+              Crop Photo
+            </motion.button>
+          )}
+
+          {/* Cropping Modal */}
+          {isCropping && (
+            <div className="crop-modal">
+              <div className="crop-container">
+                <Cropper
+                  image={preview}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  cropShape="round" // Circular crop
+                  showGrid={false} // Hide grid for clean UI
+                />
+              </div>
+              <div className="crop-controls">
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="3" 
+                  step="0.1" 
+                  value={zoom} 
+                  onChange={(e) => setZoom(e.target.value)}
+                />
+                <motion.button 
+                  className="ok-button" 
+                  onClick={handleCropConfirm}
+                  whileHover={{ scale: 1.1 }}
+                >
+                  OK
+                </motion.button>
               </div>
             </div>
+          )}
+
+          {/* Back & Save Buttons */}
+          <div className="button-group">
+            <motion.button 
+              type="button" 
+              className="back-button" 
+              onClick={() => navigate('/setup-profile/step2')}
+              whileHover={{ scale: 1.1 }}
+            >
+              Back
+            </motion.button>
+            <motion.button 
+              type="submit" 
+              className="save-button" 
+              disabled={isLoading}
+              whileHover={{ scale: 1.1 }}
+            >
+              {isLoading ? 'Saving...' : 'Save Profile'}
+            </motion.button>
           </div>
-          <button
-            type="submit"
-            className="form-submit hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            disabled={isLoading}
-          >
-            {isLoading ? <span className="spinner"></span> : 'Complete Setup'}
-          </button>
         </form>
       </motion.div>
     </div>

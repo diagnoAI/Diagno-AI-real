@@ -1,29 +1,102 @@
 .setup-step2-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
-    padding: 3rem 1rem;
-  }
-  
-  .setup-step2-container {
-    max-width: 28rem;
-    width: 100%;
-    border-radius: 0.75rem;
-    padding: 2rem;
-  }
-  
-  .setup-step2-title {
-    text-align: center;
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 2rem;
-  }
-  
-  .setup-step2-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+  padding: 3rem 1rem;
+}
+
+.setup-step2-container {
+  max-width: 30rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(37, 99, 235, 0.2);
+  transition: all 0.3s ease;
+}
+
+.setup-step2-container:hover {
+  border-color: #2563eb;
+}
+
+.setup-step2-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.setup-step2-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.3rem;
+}
+
+.form-input {
+  padding: 0.6rem;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+}
+
+.error {
+  border-color: #ef4444;
+}
+
+.error-text {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: 0.2rem;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.form-button {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.back-button {
+  background: #6b7280;
+}
+
+.next-button {
+  background: #2563eb;
+}
+
+.form-button:hover {
+  opacity: 0.9;
+}

@@ -1,0 +1,8 @@
+flask
+pymongo
+flask-jwt-extended
+flask-bcrypt
+python-dotenv
+fpdf
+pillow
+numpy

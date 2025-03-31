@@ -96,3 +96,22 @@
     transform: rotate(360deg);
   }
 }
+.resend-otp {
+  background-color: transparent;
+  border: none;
+  color: #2563eb;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: color 0.3s ease;
+}
+
+.resend-otp:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+.resend-otp:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}

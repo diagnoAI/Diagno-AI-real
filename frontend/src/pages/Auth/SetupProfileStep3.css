@@ -1,67 +1,153 @@
 .setup-step3-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
-    padding: 3rem 1rem;
-  }
-  
-  .setup-step3-container {
-    max-width: 28rem;
-    width: 100%;
-    border-radius: 0.75rem;
-    padding: 2rem;
-  }
-  
-  .setup-step3-title {
-    text-align: center;
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 2rem;
-  }
-  
-  .setup-step3-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .dropzone {
-    margin-top: 0.25rem;
-    display: flex;
-    justify-content: center;
-    padding: 1.5rem;
-    border: 2px dashed #d1d5db;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-  }
-  
-  .dropzone-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    text-align: center;
-  }
-  
-  .dropzone-icon {
-    margin: 0 auto;
-    height: 3rem;
-    width: 3rem;
-    color: #9ca3af;
-  }
-  
-  .dropzone-text {
-    display: flex;
-    font-size: 0.875rem;
-    color: #4b5563;
-  }
-  
-  .dropzone-label {
-    cursor: pointer;
-    font-weight: 500;
-    color: #2563eb;
-    transition: color 0.2s ease;
-  }
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+  padding: 3rem 1rem;
+}
+
+.setup-step3-container {
+  max-width: 30rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+}
+
+.setup-step3-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 2rem;
+}
+
+/* Profile Picture Circle */
+.profile-picture-container {
+  width: 150px;
+  height: 150px;
+  border: 3px solid #2563eb;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  transition: transform 0.3s ease;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Upload Dropzone */
+.dropzone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Crop Button */
+.crop-button {
+  background-color: #2563eb;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Crop Modal */
+.crop-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Back & Save Buttons */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+.back-button {
+  background-color: #6b7280;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+ .save-button {
+  background-color: #2563eb;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Crop Modal */
+.crop-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 90vw; /* Increase width */
+  max-width: 500px; /* Set max width */
+  height: 80vh; /* Increase height */
+  max-height: 600px; /* Set max height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cropper Container */
+.crop-container {
+  width: 100%;
+  height: 70%; /* Give enough space for the cropper */
+  position: relative;
+}
+
+/* Zoom Control */
+.crop-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.crop-controls input {
+  width: 80%;
+}
+
+.ok-button {
+  background-color: #2563eb;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
