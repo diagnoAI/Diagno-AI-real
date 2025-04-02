@@ -1,17 +1,19 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./SetupProfileStep2.css";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export function SetupProfileStep2() {
   const navigate = useNavigate();
-  const { state } = useLocation();
-
-  const [hospital, setHospital] = useState("");
+  const { setupProfile, user, loading } = useAuth();
+  const [hospitalName, setHospitalName] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
-  const [experience, setExperience] = useState("");
+  const [yearsOfExperience, setYearsOfExperience] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const specializations = [
     "Urologist",
@@ -31,12 +33,24 @@ export function SetupProfileStep2() {
     "General Practitioner",
   ];
 
+  useEffect(() => {
+    if (!user?.isVerified) {
+      navigate("/otp");
+    }
+    // Wait until loading is false and user is updated
+    if (!loading && user) {
+      if (!user.dob || !user.gender) {
+        navigate("/setup-profile/step1");
+      }
+    }
+  }, [user, loading, navigate]);
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = {};
 
-    if (!hospital) {
-      newErrors.hospital = "Clinic/Hospital Name is required";
+    if (!hospitalName) {
+      newErrors.hospitalName = "Clinic/Hospital Name is required";
       isValid = false;
     }
 
@@ -50,8 +64,8 @@ export function SetupProfileStep2() {
       isValid = false;
     }
 
-    if (!experience || isNaN(experience) || experience < 0 || experience > 60) {
-      newErrors.experience = "Enter valid experience (0-60 years)";
+    if (!yearsOfExperience || isNaN(yearsOfExperience) || yearsOfExperience < 0 || yearsOfExperience > 60) {
+      newErrors.yearsOfExperience = "Enter valid experience (0-60 years)";
       isValid = false;
     }
 
@@ -59,18 +73,33 @@ export function SetupProfileStep2() {
     return isValid;
   };
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      navigate("/setup-profile/step3", {
-        state: { ...state, hospital, specialization, licenseNumber, experience },
-      });
+      setIsLoading(true);
+      try {
+        await setupProfile("2", {
+          hospitalName,
+          specialization,
+          licenseNumber,
+          yearsOfExperience
+        });
+        toast.success("Profile setup step 2 completed!");
+        // Navigation is handled in AuthContext
+      } catch (error) {
+        toast.error(error.message || "Profile setup failed. Please try again.");
+        setIsLoading(false);
+      }
     }
   };
 
   const handleBack = () => {
-    navigate("/setup-profile/step1", { state });
+    navigate("/setup-profile/step1");
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="setup-step2-page">
@@ -81,7 +110,6 @@ export function SetupProfileStep2() {
       >
         <h2 className="setup-step2-title">Professional Details</h2>
         <form className="setup-step2-form" onSubmit={handleNext}>
-          {/* Hospital/Clinic Name */}
           <div className="form-group">
             <label htmlFor="hospital" className="form-label">
               Clinic/Hospital Name
@@ -89,15 +117,14 @@ export function SetupProfileStep2() {
             <input
               id="hospital"
               type="text"
-              value={hospital}
-              onChange={(e) => setHospital(e.target.value)}
-              className={`form-input ${errors.hospital ? "error" : ""}`}
+              value={hospitalName}
+              onChange={(e) => setHospitalName(e.target.value)}
+              className={`form-input ${errors.hospitalName ? "error" : ""}`}
               placeholder="Enter your clinic or hospital name"
             />
-            {errors.hospital && <p className="error-text">{errors.hospital}</p>}
+            {errors.hospitalName && <p className="error-text">{errors.hospitalName}</p>}
           </div>
 
-          {/* Specialization Dropdown */}
           <div className="form-group">
             <label htmlFor="specialization" className="form-label">
               Specialization
@@ -120,7 +147,6 @@ export function SetupProfileStep2() {
             )}
           </div>
 
-          {/* Medical License Number */}
           <div className="form-group">
             <label htmlFor="licenseNumber" className="form-label">
               Medical License Number
@@ -138,7 +164,6 @@ export function SetupProfileStep2() {
             )}
           </div>
 
-          {/* Years of Experience */}
           <div className="form-group">
             <label htmlFor="experience" className="form-label">
               Years of Experience
@@ -146,18 +171,17 @@ export function SetupProfileStep2() {
             <input
               id="experience"
               type="number"
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className={`form-input ${errors.experience ? "error" : ""}`}
+              value={yearsOfExperience}
+              onChange={(e) => setYearsOfExperience(e.target.value)}
+              className={`form-input ${errors.yearsOfExperience ? "error" : ""}`}
               min="0"
               max="60"
             />
-            {errors.experience && (
-              <p className="error-text">{errors.experience}</p>
+            {errors.yearsOfExperience && (
+              <p className="error-text">{errors.yearsOfExperience}</p>
             )}
           </div>
 
-          {/* Navigation Buttons */}
           <div className="form-buttons">
             <button
               type="button"
@@ -169,8 +193,9 @@ export function SetupProfileStep2() {
             <button
               type="submit"
               className="form-button next-button"
+              disabled={isLoading}
             >
-              Next
+              {isLoading ? <span className="spinner"></span> : "Next"}
             </button>
           </div>
         </form>

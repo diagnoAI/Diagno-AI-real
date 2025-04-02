@@ -43,11 +43,11 @@ export function Sidebar({ onToggle }) {
       </div>
       <div className="sidebar-profile">
         <img
-          src={user?.profileImage || '/default-profile.png'}
-          alt={user?.name}
+          src={user?.profilePhoto || 'https://via.placeholder.com/150'}
+          alt={user?.fullName}
           className="sidebar-profile-image"
         />
-        {!isCollapsed && <h3 className="sidebar-profile-name">Dr. {user?.name}</h3>}
+        {!isCollapsed && <h3 className="sidebar-profile-name">Dr. {user?.fullName}</h3>}
       </div>
       <nav className="sidebar-links">
         <Link to="/dashboard" className="sidebar-link">

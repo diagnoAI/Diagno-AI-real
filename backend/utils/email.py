@@ -9,7 +9,6 @@ SMTP_PORT = 587
 EMAIL_ADDRESS = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASS")
 
-
 def send_otp_email(email, otp):
     """Send OTP to user email"""
     try:

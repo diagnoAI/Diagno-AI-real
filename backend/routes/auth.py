@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
@@ -7,14 +7,17 @@ from dotenv import load_dotenv
 import os
 import datetime
 import random
+from bson.objectid import ObjectId
 from utils.email import send_otp_email
+import base64  # For encoding/decoding images
+from utils.compress import compress_image  # Import the compression function
 
 # Load environment variables
 load_dotenv()
 
 # Blueprint setup
 auth_bp = Blueprint("auth", __name__)
-CORS(auth_bp)  
+CORS(auth_bp, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
 
 # Initialize bcrypt
 bcrypt = Bcrypt()
@@ -28,18 +31,16 @@ db = get_db()
 doctors = db["doctors"]
 otp_collection = db["otp_verifications"]
 
-
-
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
     """Signup and send OTP"""
     data = request.json
-    name = data.get("name")
+    full_name = data.get("name")
     email = data.get("email")
     password = data.get("password")
     confirm_password = data.get("confirmPassword")
 
-    if not all([name, email, password, confirm_password]):
+    if not all([full_name, email, password, confirm_password]):
         return jsonify({"message": "All fields are required"}), 400
     if password != confirm_password:
         return jsonify({"message": "Passwords do not match"}), 400
@@ -48,12 +49,18 @@ def signup():
 
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     doctor = {
-        "name": name,
+        "fullName": full_name,
         "email": email,
         "password": hashed_password,
+        "dob": None,
+        "gender": "",
+        "hospitalName": "",
+        "specialization": "",
+        "licenseNumber": "",
+        "yearsOfExperience": 0,
+        "profilePhoto": "",  # Store as base64 string
         "isVerified": False,
-        "hospital": "",
-        "profileImage": "",
+        "profileSetupCompleted": False,
         "createdAt": datetime.datetime.utcnow(),
         "updatedAt": datetime.datetime.utcnow()
     }
@@ -62,7 +69,7 @@ def signup():
     # Generate and send OTP
     otp = str(random.randint(100000, 999999))
     print(f"Generated OTP: {otp}")
-    
+
     # Store OTP in database with expiration
     otp_collection.insert_one({
         "email": email,
@@ -70,15 +77,14 @@ def signup():
         "createdAt": datetime.datetime.utcnow(),
         "expiresAt": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
     })
-    
+
     send_otp_email(email, otp)
 
     return jsonify({"message": "Signup successful, OTP sent to email", "doctorId": str(doctor_id)}), 201
 
-
 @auth_bp.route("/verify-otp", methods=["POST"])
 def verify_otp():
-    """Verify OTP"""
+    """Verify OTP and issue JWT token"""
     data = request.json
     email = data.get("email")
     otp = data.get("otp")
@@ -87,11 +93,16 @@ def verify_otp():
     if not otp_record or otp_record["expiresAt"] < datetime.datetime.utcnow():
         return jsonify({"message": "Invalid or expired OTP"}), 400
 
+    doctor = doctors.find_one({"email": email})
     doctors.update_one({"email": email}, {"$set": {"isVerified": True}})
     otp_collection.delete_one({"email": email, "otp": otp})
 
-    return jsonify({"message": "OTP verified successfully"}), 200
-
+    access_token = create_access_token(identity=str(doctor["_id"]))
+    return jsonify({
+        "message": "OTP verified successfully",
+        "accessToken": access_token,
+        "doctorId": str(doctor["_id"])
+    }), 200
 
 @auth_bp.route("/resend-otp", methods=["POST"])
 def resend_otp():
@@ -126,7 +137,6 @@ def resend_otp():
 
     return jsonify({"message": "New OTP sent to email"}), 200
 
-
 @auth_bp.route("/login", methods=["POST"])
 def login():
     """Login"""
@@ -138,7 +148,9 @@ def login():
     if not doctor or not bcrypt.check_password_hash(doctor["password"], password):
         return jsonify({"message": "Invalid email or password"}), 401
     if not doctor["isVerified"]:
-        return jsonify({"message": "Please verify your email first"}), 403
+        return jsonify({"message": "Please verify your email first", "doctorId": str(doctor["_id"])}), 403
+    if not doctor["profileSetupCompleted"]:
+        return jsonify({"message": "Please complete your profile setup", "doctorId": str(doctor["_id"])}), 403
 
     access_token = create_access_token(identity=str(doctor["_id"]))
     return jsonify({
@@ -146,35 +158,134 @@ def login():
         "accessToken": access_token,
         "doctor": {
             "id": str(doctor["_id"]),
-            "name": doctor["name"],
+            "fullName": doctor["fullName"],
             "email": doctor["email"],
-            "hospital": doctor["hospital"],
-            "profileImage": doctor["profileImage"]
+            "hospitalName": doctor["hospitalName"],
+            "profilePhoto": doctor["profilePhoto"],  # Base64 string
+            "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
+            "gender": doctor["gender"],
+            "specialization": doctor["specialization"],
+            "licenseNumber": doctor["licenseNumber"],
+            "yearsOfExperience": doctor["yearsOfExperience"]
         }
     }), 200
 
-@auth_bp.route("/setup1", methods=["POST"])
-def setup1():
-    """Setup step 1"""
-    data = request.json
-    fullname = data.get("fullname")
-    dob = data.get("dob")
-    gender = data.get("gender")
+@auth_bp.route("/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    """Fetch doctor profile"""
+    doctor_id = get_jwt_identity()
+    doctor = doctors.find_one({"_id": ObjectId(doctor_id)})
+    if not doctor:
+        return jsonify({"message": "Doctor not found"}), 404
 
-    if not all([fullname,dob,gender]):
-        return jsonify({"message": "All fields are required"}), 400
-    
-    doctor_setup1 = {
-        "fullname": fullname,
-        "date-of-birth": dob,
-        "gender" :gender
-    }
+    return jsonify({
+        "doctor": {
+            "id": str(doctor["_id"]),
+            "fullName": doctor["fullName"],
+            "email": doctor["email"],
+            "hospitalName": doctor["hospitalName"],
+            "profilePhoto": doctor["profilePhoto"],  # Base64 string
+            "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
+            "gender": doctor["gender"],
+            "specialization": doctor["specialization"],
+            "licenseNumber": doctor["licenseNumber"],
+            "yearsOfExperience": doctor["yearsOfExperience"]
+        }
+    }), 200
 
-    doctor_id = doctors.insert_one(doctor_setup1).inserted_id
-    print(doctor_id)
+@auth_bp.route("/setup-profile", methods=["POST"])
+@jwt_required()
+def setup_profile():
+    """Update doctor profile based on step"""
+    doctor_id = get_jwt_identity()
+    data = request.form if request.form else request.json
+    step = data.get("step")
 
-    return jsonify({"message": "Setup step 1 completed successfully"}), 200
+    if not step:
+        return jsonify({"message": "Step is required"}), 400
 
+    updates = {"updatedAt": datetime.datetime.utcnow()}
+    doctor = doctors.find_one({"_id": ObjectId(doctor_id)})
+    if not doctor:
+        return jsonify({"message": "Doctor not found"}), 404
+
+    if step == "1":
+        full_name = data.get("fullName")
+        dob = data.get("dob")
+        gender = data.get("gender")
+
+        if not all([full_name, dob, gender]):
+            return jsonify({"message": "All fields are required for step 1"}), 400
+
+        updates["fullName"] = full_name
+        updates["dob"] = datetime.datetime.strptime(dob, "%Y-%m-%d")
+        updates["gender"] = gender
+
+    elif step == "2":
+        hospital_name = data.get("hospitalName")
+        specialization = data.get("specialization")
+        license_number = data.get("licenseNumber")
+        years_of_experience = data.get("yearsOfExperience")
+
+        if not all([hospital_name, specialization, license_number, years_of_experience]):
+            return jsonify({"message": "All fields are required for step 2"}), 400
+
+        updates["hospitalName"] = hospital_name
+        updates["specialization"] = specialization
+        updates["licenseNumber"] = license_number
+        updates["yearsOfExperience"] = int(years_of_experience)
+
+    elif step == "3":
+        profile_photo = request.files.get("profilePhoto") if "profilePhoto" in request.files else None
+        if profile_photo:
+            # Read the image file
+            image_data = profile_photo.read()
+            image_size_mb = len(image_data) / (1024 * 1024)  # Size in MB
+
+            # Compress the image if it's larger than 1MB
+            if image_size_mb > 1:
+                print(f"Compressing image: Original size = {image_size_mb:.2f} MB")
+                try:
+                    image_data = compress_image(image_data, max_size_mb=1, max_dimension=300, quality=85)
+                except ValueError as e:
+                    return jsonify({"message": str(e)}), 400
+                compressed_size_mb = len(image_data) / (1024 * 1024)
+                print(f"Compressed size = {compressed_size_mb:.2f} MB")
+
+            # Convert the (possibly compressed) image to base64
+            base64_image = base64.b64encode(image_data).decode("utf-8")
+            # Add the data URI prefix so the frontend can use it directly
+            mime_type = profile_photo.mimetype  # e.g., "image/jpeg"
+            base64_image = f"data:{mime_type};base64,{base64_image}"
+            updates["profilePhoto"] = base64_image
+            updates["profileSetupCompleted"] = True  # Mark setup as complete
+        else:
+            updates["profilePhoto"] = doctor.get("profilePhoto", "")
+            updates["profileSetupCompleted"] = True  # Mark setup as complete even if no photo
+
+    else:
+        return jsonify({"message": "Invalid step"}), 400
+
+    doctors.update_one({"_id": ObjectId(doctor_id)}, {"$set": updates})
+    updated_doctor = doctors.find_one({"_id": ObjectId(doctor_id)})
+
+    return jsonify({
+        "message": f"Profile setup step {step} completed successfully",
+        "profileSetupCompleted": updated_doctor["profileSetupCompleted"],
+        "doctor": {
+            "id": str(updated_doctor["_id"]),
+            "fullName": updated_doctor["fullName"],
+            "email": updated_doctor["email"],
+            "dob": updated_doctor["dob"].isoformat() if updated_doctor["dob"] else None,
+            "gender": updated_doctor["gender"],
+            "hospitalName": updated_doctor["hospitalName"],
+            "specialization": updated_doctor["specialization"],
+            "licenseNumber": updated_doctor["licenseNumber"],
+            "yearsOfExperience": updated_doctor["yearsOfExperience"],
+            "profilePhoto": updated_doctor["profilePhoto"]  # Base64 string
+        }
+    }), 200
 
 @auth_bp.route("/logout", methods=["POST"])
 @jwt_required()

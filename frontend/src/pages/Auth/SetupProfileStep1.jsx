@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./SetupProfileStep1.css";
@@ -6,20 +6,26 @@ import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
 export function SetupProfileStep1() {
-  const [fullname, setFullName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [errors, setErrors] = useState({ fullName: "", dob: "", gender: "" });
-  const { setProfile1 } = useAuth();
+  const { setupProfile, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!user?.isVerified) {
+      navigate("/otp");
+    }
+  }, [user, navigate]);
+
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { fullname: "", dob: "", gender: "" };
+    const newErrors = { fullName: "", dob: "", gender: "" };
 
-    if (!fullname) {
-      newErrors.fullname = "Full Name is required";
+    if (!fullName) {
+      newErrors.fullName = "Full Name is required";
       isValid = false;
     }
 
@@ -40,15 +46,14 @@ export function SetupProfileStep1() {
   const handleNext = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      setIsLoading(true); // Start loading state
+      setIsLoading(true);
       try {
-        await setProfile1({ fullname, dob, gender });
-        toast.success("Profile setup successful!");
-        navigate("/setup-profile/step2"); // Redirect to the next step
+        await setupProfile("1", { fullName, dob, gender });
+        toast.success("Profile setup step 1 completed!");
+        // Navigation is handled in AuthContext
       } catch (error) {
-        toast.error("Profile setup failed. Please try again.");
-      } finally {
-        setIsLoading(false); // End loading state
+        toast.error(error.message || "Profile setup failed. Please try again.");
+        setIsLoading(false);
       }
     }
   };
@@ -69,12 +74,12 @@ export function SetupProfileStep1() {
             <input
               id="fullName"
               type="text"
-              value={fullname}
+              value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className={`form-input ${errors.fullName ? "error" : ""}`}
               placeholder="Enter your full name"
             />
-            {errors.fullname && <p className="error-text">{errors.fullName}</p>}
+            {errors.fullName && <p className="error-text">{errors.fullName}</p>}
           </div>
 
           <div className="form-group">
@@ -110,8 +115,8 @@ export function SetupProfileStep1() {
           </div>
 
           <div className="button-group">
-            <button type="submit" className="next-button">
-              {isLoading ? <span className="spinner"></span>  : "Next"}
+            <button type="submit" className="next-button" disabled={isLoading}>
+              {isLoading ? <span className="spinner"></span> : "Next"}
             </button>
           </div>
         </form>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload } from 'lucide-react';
@@ -7,6 +7,7 @@ import Cropper from 'react-easy-crop';
 import getCroppedImg from '../../utils/cropImage';
 import toast from 'react-hot-toast';
 import './SetupProfileStep3.css';
+import { useAuth } from '../../context/AuthContext';
 
 export function SetupProfileStep3() {
   const [profileImage, setProfileImage] = useState(null);
@@ -16,8 +17,20 @@ export function SetupProfileStep3() {
   const [zoom, setZoom] = useState(1);
   const [isCropping, setIsCropping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { setupProfile, user, loading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user?.isVerified) {
+      navigate("/otp");
+    }
+    // Wait until loading is false and user is updated
+    if (!loading && user) {
+      if (!user.hospitalName || !user.specialization) {
+        navigate("/setup-profile/step2");
+      }
+    }
+  }, [user, loading, navigate]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
@@ -25,13 +38,18 @@ export function SetupProfileStep3() {
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
       setProfileImage(file);
-      setPreview(URL.createObjectURL(file)); // Show preview first
+      setPreview(URL.createObjectURL(file));
     },
   });
 
   const onCropComplete = useCallback(async (_, croppedAreaPixels) => {
     const cropped = await getCroppedImg(preview, croppedAreaPixels);
     setCroppedImage(cropped);
+    // Convert cropped image (base64) to a File object
+    const response = await fetch(cropped);
+    const blob = await response.blob();
+    const file = new File([blob], "profilePhoto.jpg", { type: "image/jpeg" });
+    setProfileImage(file);
   }, [preview]);
 
   const handleCropConfirm = () => {
@@ -42,14 +60,34 @@ export function SetupProfileStep3() {
     e.preventDefault();
     setIsLoading(true);
     try {
+      const data = {};
+      if (profileImage) {
+        data.profilePhoto = profileImage;
+      }
+      await setupProfile("3", data);
       toast.success('Profile setup complete!');
-      navigate('/login');
+      // Navigation is handled in AuthContext
     } catch (error) {
-      toast.error('Failed to setup profile');
-    } finally {
+      toast.error(error.message || 'Failed to setup profile');
       setIsLoading(false);
     }
   };
+
+  const handleSkip = async () => {
+    setIsLoading(true);
+    try {
+      await setupProfile("3", {});
+      toast.success('Profile setup complete!');
+      // Navigation is handled in AuthContext
+    } catch (error) {
+      toast.error(error.message || 'Failed to setup profile');
+      setIsLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="setup-step3-page">
@@ -60,8 +98,6 @@ export function SetupProfileStep3() {
       >
         <h2 className="setup-step3-title">Upload Profile Photo</h2>
         <form className="setup-step3-form" onSubmit={handleSubmit}>
-          
-          {/* Profile Picture Preview */}
           <motion.div 
             className="profile-picture-container"
             whileHover={{ scale: 1.1 }}
@@ -79,7 +115,6 @@ export function SetupProfileStep3() {
             )}
           </motion.div>
 
-          {/* Crop Button */}
           {preview && (
             <motion.button 
               type="button" 
@@ -91,7 +126,6 @@ export function SetupProfileStep3() {
             </motion.button>
           )}
 
-          {/* Cropping Modal */}
           {isCropping && (
             <div className="crop-modal">
               <div className="crop-container">
@@ -103,8 +137,8 @@ export function SetupProfileStep3() {
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
-                  cropShape="round" // Circular crop
-                  showGrid={false} // Hide grid for clean UI
+                  cropShape="round"
+                  showGrid={false}
                 />
               </div>
               <div className="crop-controls">
@@ -127,7 +161,6 @@ export function SetupProfileStep3() {
             </div>
           )}
 
-          {/* Back & Save Buttons */}
           <div className="button-group">
             <motion.button 
               type="button" 
@@ -136,6 +169,15 @@ export function SetupProfileStep3() {
               whileHover={{ scale: 1.1 }}
             >
               Back
+            </motion.button>
+            <motion.button 
+              type="button" 
+              className="skip-button" 
+              onClick={handleSkip}
+              disabled={isLoading}
+              whileHover={{ scale: 1.1 }}
+            >
+              {isLoading ? 'Skipping...' : 'Skip'}
             </motion.button>
             <motion.button 
               type="submit" 

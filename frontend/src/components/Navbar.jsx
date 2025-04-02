@@ -68,10 +68,11 @@ export function Navbar() {
                     className="navbar-user-button"
                     onClick={toggleDropdown}
                   >
-                    {user?.profileImage ? (
+                    {user?.profilePhoto ? (
                       <img
-                        src={user.profileImage}
-                        alt={user.name}
+                        src={user.profilePhoto
+                        }
+                        alt={user.fullname}
                         className="navbar-user-image"
                       />
                     ) : (

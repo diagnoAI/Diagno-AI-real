@@ -278,7 +278,7 @@ export function DashboardHome() {
         <div className="flex items-center gap-3">
           <Stethoscope className="h-7 w-7 text-blue-600" />
           <h2 className="dashboard-home-title">
-            Welcome, Dr. {user?.name || 'Doctor'}
+            Welcome, Dr. {user?.fullname || 'Doctor'}
           </h2>
         </div>
         <motion.p

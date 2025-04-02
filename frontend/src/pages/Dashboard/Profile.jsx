@@ -6,9 +6,10 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Profile.css';
+import axios from 'axios';
 
 export function Profile() {
-  const { user, updateProfile } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if no user
@@ -27,32 +28,32 @@ export function Profile() {
   const [isEditingPhoto, setIsEditingPhoto] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    specialization: user?.specialization || '',
-    hospital: user?.hospital || '',
-    experience: user?.experience || '',
+    fullName: user?.fullName || '',
+    Specialization: user?.specialization || '',
+    hospitalName: user?.hospitalName || '',
+    yearsOfExperience: user?.yearsOfExperience || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    profileImage: user?.profileImage || null,
+    profilePhoto: user?.profilePhoto || null,
     bio: user?.bio || '',
   });
-  const [profileImagePreview, setProfileImagePreview] = useState(user?.profileImage || '/default-profile.png');
+  const [profileImagePreview, setProfileImagePreview] = useState(user?.profilePhoto || '/default-profile.png');
 
   useEffect(() => {
-    if (formData.profileImage && typeof formData.profileImage !== 'string') {
-      const url = URL.createObjectURL(formData.profileImage);
+    if (formData.profilePhoto && typeof formData.profilePhoto !== 'string') {
+      const url = URL.createObjectURL(formData.profilePhoto);
       setProfileImagePreview(url);
       return () => URL.revokeObjectURL(url);
     } else {
-      setProfileImagePreview(formData.profileImage || '/default-profile.png');
+      setProfileImagePreview(formData.profilePhoto || '/default-profile.png');
     }
-  }, [formData.profileImage]);
+  }, [formData.profilePhoto]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
     maxFiles: 1,
     onDrop: (acceptedFiles) => {
-      setFormData((prev) => ({ ...prev, profileImage: acceptedFiles[0] }));
+      setFormData((prev) => ({ ...prev, profilePhoto: acceptedFiles[0] }));
     },
   });
 
@@ -60,10 +61,23 @@ export function Profile() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await updateProfile(formData);
+      const updates = {
+        step: "update", // Custom step for profile updates
+        fullName: formData.fullName,
+        hospitalName: formData.hospitalName,
+        specialization: formData.Specialization,
+        yearsOfExperience: formData.yearsOfExperience,
+      };
+      const formDataToSend = new FormData();
+      for (const key in updates) {
+        formDataToSend.append(key, updates[key]);
+      }
+      const response = await axios.post('http://localhost:5000/auth/setup-profile', formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData((prev) => ({ ...prev, ...response.data.doctor }));
       toast.success('Profile updated successfully');
       setIsEditingProfile(false);
-      // Remove Object.assign - rely on context to update user
     } catch (error) {
       toast.error('Failed to update profile');
     } finally {
@@ -75,10 +89,17 @@ export function Profile() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await updateProfile({ profileImage: formData.profileImage });
+      const formDataToSend = new FormData();
+      formDataToSend.append("step", "3");
+      if (formData.profilePhoto) {
+        formDataToSend.append("profilePhoto", formData.profilePhoto);
+      }
+      const response = await axios.post('http://localhost:5000/auth/setup-profile', formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData((prev) => ({ ...prev, ...response.data.doctor }));
       toast.success('Profile photo updated successfully');
       setIsEditingPhoto(false);
-      // Remove Object.assign - rely on context to update user
     } catch (error) {
       toast.error('Failed to update photo');
     } finally {
@@ -89,26 +110,26 @@ export function Profile() {
   const handleProfileCancel = () => {
     setIsEditingProfile(false);
     setFormData({
-      name: user?.name || '',
-      specialization: user?.specialization || '',
-      hospital: user?.hospital || '',
-      experience: user?.experience || '',
+      fullName: user?.fullName || '',
+      Specialization: user?.specialization || '',
+      hospitalName: user?.hospitalName || '',
+      yearsOfExperience: user?.yearsOfExperience || '',
       email: user?.email || '',
       phone: user?.phone || '',
-      profileImage: user?.profileImage || null,
+      profilePhoto: user?.profilePhoto || null,
       bio: user?.bio || '',
     });
   };
 
   const handlePhotoCancel = () => {
     setIsEditingPhoto(false);
-    setFormData((prev) => ({ ...prev, profileImage: user?.profileImage || null }));
-    setProfileImagePreview(user?.profileImage || '/default-profile.png');
+    setFormData((prev) => ({ ...prev, profilePhoto: user?.profilePhoto || null }));
+    setProfileImagePreview(user?.profilePhoto || '/default-profile.png');
   };
 
   const removeProfileImage = (e) => {
     e.stopPropagation();
-    setFormData((prev) => ({ ...prev, profileImage: null }));
+    setFormData((prev) => ({ ...prev, profilePhoto: null }));
     setProfileImagePreview('/default-profile.png');
   };
 
@@ -165,8 +186,8 @@ export function Profile() {
                 <label className="form-label">Name</label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   className="form-input"
                 />
               </motion.div>
@@ -179,8 +200,8 @@ export function Profile() {
                 <label className="form-label">Hospital/Clinic</label>
                 <input
                   type="text"
-                  value={formData.hospital}
-                  onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}
+                  value={formData.hospitalName}
+                  onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })}
                   className="form-input"
                 />
               </motion.div>
@@ -193,8 +214,8 @@ export function Profile() {
                 <label className="form-label">Specialization</label>
                 <input
                   type="text"
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                  value={formData.Specialization}
+                  onChange={(e) => setFormData({ ...formData, Specialization: e.target.value })}
                   className="form-input"
                 />
               </motion.div>
@@ -207,8 +228,8 @@ export function Profile() {
                 <label className="form-label">Years of Experience</label>
                 <input
                   type="number"
-                  value={formData.experience}
-                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                  value={formData.yearsOfExperience}
+                  onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
                   className="form-input"
                 />
               </motion.div>
@@ -224,6 +245,7 @@ export function Profile() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="form-input"
+                  disabled
                 />
               </motion.div>
               <motion.div
@@ -367,7 +389,7 @@ export function Profile() {
                   {profileImagePreview ? (
                     <img
                       src={profileImagePreview}
-                      alt={user?.name}
+                      alt={user?.fullName}
                       className="profile-image"
                     />
                   ) : (
@@ -376,7 +398,7 @@ export function Profile() {
                     </div>
                   )}
                   <div className="profile-text">
-                    <h2 className="profile-name">Dr. {user?.name}</h2>
+                    <h2 className="profile-name">Dr. {user?.fullName}</h2>
                     <p className="profile-specialization">{user?.specialization}</p>
                   </div>
                 </motion.div>
@@ -388,11 +410,11 @@ export function Profile() {
                 >
                   <div className="detail-item">
                     <Building2 className="detail-icon" />
-                    <span>{user?.hospital}</span>
+                    <span>{user?.hospitalName}</span>
                   </div>
                   <div className="detail-item">
                     <Award className="detail-icon" />
-                    <span>{user?.experience} years</span>
+                    <span>{user?.yearsOfExperience} years</span>
                   </div>
                 </motion.div>
               </div>
@@ -408,7 +430,7 @@ export function Profile() {
                 </div>
                 <div className="detail-item">
                   <Phone className="detail-icon" />
-                  <span>{user?.phone}</span>
+                  <span>{user?.phone || 'Not provided'}</span>
                 </div>
                 <div className="detail-item detail-bio">
                   <span>{user?.bio || 'No bio'}</span>

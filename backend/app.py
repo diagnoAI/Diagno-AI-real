@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS  
+from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
@@ -8,10 +8,11 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS globally
-
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 jwt = JWTManager(app)
+
+# Enable CORS for the frontend origin
+CORS(app, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
 
 # MongoDB connection
 client = MongoClient("mongodb://localhost:27017/")
@@ -23,4 +24,4 @@ from routes.auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)

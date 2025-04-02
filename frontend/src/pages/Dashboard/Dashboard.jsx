@@ -75,8 +75,8 @@ export function Dashboard() {
               <Menu className="top-bar-hamburger-icon" />
             </button>
             <img
-              src={user?.profileImage || '/default-profile.png'}
-              alt={user?.name}
+              src={user?.profilePhoto || '/default-profile.png'}
+              alt={user?.fullname}
               className="top-bar-profile-image"
             />
             {showDropdown && (
@@ -108,7 +108,7 @@ export function Dashboard() {
           isMobile ? 'mobile' : isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'
         }`}
       >
-        {showWelcome && user && <WelcomeScreen name={user.name} onClose={() => setShowWelcome(false)} />}
+        {showWelcome && user && <WelcomeScreen name={user.fullname} onClose={() => setShowWelcome(false)} />}
         <div className="dashboard-main">
           <Routes>
             <Route path="/" element={<DashboardHome />} />
