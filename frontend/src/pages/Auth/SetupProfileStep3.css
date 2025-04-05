@@ -57,33 +57,13 @@
   text-align: center;
 }
 
-/* Crop Button */
-.crop-button {
-  background-color: #2563eb;
-  color: white;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Crop Modal */
-.crop-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Back & Save Buttons */
+/* Back, Skip & Save Buttons */
 .button-group {
   display: flex;
   justify-content: space-between;
+  margin-top: 2rem;
 }
+
 .back-button {
   background-color: #6b7280;
   color: white;
@@ -91,11 +71,10 @@
   padding: 0.5rem 1rem;
   border-radius: 5px;
   cursor: pointer;
-  margin-right: 1rem;
 }
 
- .save-button {
-  background-color: #2563eb;
+.skip-button {
+  background-color: #9ca3af;
   color: white;
   font-weight: bold;
   padding: 0.5rem 1rem;
@@ -103,47 +82,7 @@
   cursor: pointer;
 }
 
-/* Crop Modal */
-.crop-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 90vw; /* Increase width */
-  max-width: 500px; /* Set max width */
-  height: 80vh; /* Increase height */
-  max-height: 600px; /* Set max height */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Cropper Container */
-.crop-container {
-  width: 100%;
-  height: 70%; /* Give enough space for the cropper */
-  position: relative;
-}
-
-/* Zoom Control */
-.crop-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.crop-controls input {
-  width: 80%;
-}
-
-.ok-button {
+.save-button {
   background-color: #2563eb;
   color: white;
   font-weight: bold;

@@ -9,8 +9,8 @@ import datetime
 import random
 from bson.objectid import ObjectId
 from utils.email import send_otp_email
-import base64  # For encoding/decoding images
-from utils.compress import compress_image  # Import the compression function
+import base64
+from utils.compress import compress_image
 
 # Load environment variables
 load_dotenv()
@@ -54,11 +54,14 @@ def signup():
         "password": hashed_password,
         "dob": None,
         "gender": "",
+        "age": 0,  # New field
         "hospitalName": "",
         "specialization": "",
         "licenseNumber": "",
         "yearsOfExperience": 0,
         "profilePhoto": "",  # Store as base64 string
+        "phone": "",  # New field
+        "bio": "",  # New field
         "isVerified": False,
         "profileSetupCompleted": False,
         "createdAt": datetime.datetime.utcnow(),
@@ -164,9 +167,12 @@ def login():
             "profilePhoto": doctor["profilePhoto"],  # Base64 string
             "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
             "gender": doctor["gender"],
+            "age": doctor["age"],  # New field
             "specialization": doctor["specialization"],
             "licenseNumber": doctor["licenseNumber"],
-            "yearsOfExperience": doctor["yearsOfExperience"]
+            "yearsOfExperience": doctor["yearsOfExperience"],
+            "phone": doctor["phone"],  # New field
+            "bio": doctor["bio"]  # New field
         }
     }), 200
 
@@ -188,9 +194,12 @@ def get_profile():
             "profilePhoto": doctor["profilePhoto"],  # Base64 string
             "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
             "gender": doctor["gender"],
+            "age": doctor["age"],  # New field
             "specialization": doctor["specialization"],
             "licenseNumber": doctor["licenseNumber"],
-            "yearsOfExperience": doctor["yearsOfExperience"]
+            "yearsOfExperience": doctor["yearsOfExperience"],
+            "phone": doctor["phone"],  # New field
+            "bio": doctor["bio"]  # New field
         }
     }), 200
 
@@ -213,14 +222,14 @@ def setup_profile():
     if step == "1":
         full_name = data.get("fullName")
         dob = data.get("dob")
-        gender = data.get("gender")
+        gender = data.get("gender")  # New field
 
         if not all([full_name, dob, gender]):
             return jsonify({"message": "All fields are required for step 1"}), 400
 
         updates["fullName"] = full_name
         updates["dob"] = datetime.datetime.strptime(dob, "%Y-%m-%d")
-        updates["gender"] = gender
+        updates["gender"] = gender # New field
 
     elif step == "2":
         hospital_name = data.get("hospitalName")
@@ -241,7 +250,7 @@ def setup_profile():
         if profile_photo:
             # Read the image file
             image_data = profile_photo.read()
-            image_size_mb = len(image_data) / (1024 * 1024)  # Size in MB
+            image_size_mb = len(image_data) / (1024 * 1024)
 
             # Compress the image if it's larger than 1MB
             if image_size_mb > 1:
@@ -255,14 +264,35 @@ def setup_profile():
 
             # Convert the (possibly compressed) image to base64
             base64_image = base64.b64encode(image_data).decode("utf-8")
-            # Add the data URI prefix so the frontend can use it directly
-            mime_type = profile_photo.mimetype  # e.g., "image/jpeg"
+            mime_type = profile_photo.mimetype
             base64_image = f"data:{mime_type};base64,{base64_image}"
             updates["profilePhoto"] = base64_image
-            updates["profileSetupCompleted"] = True  # Mark setup as complete
+            updates["profileSetupCompleted"] = True
         else:
             updates["profilePhoto"] = doctor.get("profilePhoto", "")
-            updates["profileSetupCompleted"] = True  # Mark setup as complete even if no photo
+            updates["profileSetupCompleted"] = True
+
+    elif step == "update":  # New step for profile editing
+        full_name = data.get("fullName")
+        hospital_name = data.get("hospitalName")
+        specialization = data.get("specialization")
+        years_of_experience = data.get("yearsOfExperience")
+        phone = data.get("phone")
+        bio = data.get("bio")
+        age = data.get("age")  # New field
+        gender = data.get("gender")  # New field
+
+        if not all([full_name, hospital_name, specialization, years_of_experience, phone, bio, age, gender]):
+            return jsonify({"message": "All fields are required for profile update"}), 400
+
+        updates["fullName"] = full_name
+        updates["hospitalName"] = hospital_name
+        updates["specialization"] = specialization
+        updates["yearsOfExperience"] = int(years_of_experience)
+        updates["phone"] = phone
+        updates["bio"] = bio
+        updates["age"] = int(age)  # New field
+        updates["gender"] = gender  # New field
 
     else:
         return jsonify({"message": "Invalid step"}), 400
@@ -271,7 +301,7 @@ def setup_profile():
     updated_doctor = doctors.find_one({"_id": ObjectId(doctor_id)})
 
     return jsonify({
-        "message": f"Profile setup step {step} completed successfully",
+        "message": f"Profile {step} completed successfully",
         "profileSetupCompleted": updated_doctor["profileSetupCompleted"],
         "doctor": {
             "id": str(updated_doctor["_id"]),
@@ -279,11 +309,14 @@ def setup_profile():
             "email": updated_doctor["email"],
             "dob": updated_doctor["dob"].isoformat() if updated_doctor["dob"] else None,
             "gender": updated_doctor["gender"],
+            "age": updated_doctor["age"],  # New field
             "hospitalName": updated_doctor["hospitalName"],
             "specialization": updated_doctor["specialization"],
             "licenseNumber": updated_doctor["licenseNumber"],
             "yearsOfExperience": updated_doctor["yearsOfExperience"],
-            "profilePhoto": updated_doctor["profilePhoto"]  # Base64 string
+            "profilePhoto": updated_doctor["profilePhoto"],
+            "phone": updated_doctor["phone"],  # New field
+            "bio": updated_doctor["bio"]  # New field
         }
     }), 200
 

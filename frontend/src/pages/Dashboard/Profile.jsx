@@ -9,7 +9,7 @@ import './Profile.css';
 import axios from 'axios';
 
 export function Profile() {
-  const { user, logout } = useAuth();
+  const { user, logout, setupProfile } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if no user
@@ -36,6 +36,8 @@ export function Profile() {
     phone: user?.phone || '',
     profilePhoto: user?.profilePhoto || null,
     bio: user?.bio || '',
+    age: user?.age || 0,  // New field
+    gender: user?.gender || '',  // New field
   });
   const [profileImagePreview, setProfileImagePreview] = useState(user?.profilePhoto || '/default-profile.png');
 
@@ -62,24 +64,21 @@ export function Profile() {
     setIsLoading(true);
     try {
       const updates = {
-        step: "update", // Custom step for profile updates
+        step: "update",
         fullName: formData.fullName,
         hospitalName: formData.hospitalName,
         specialization: formData.Specialization,
         yearsOfExperience: formData.yearsOfExperience,
+        phone: formData.phone,
+        bio: formData.bio,
+        age: formData.age,  // New field
+        gender: formData.gender,  // New field
       };
-      const formDataToSend = new FormData();
-      for (const key in updates) {
-        formDataToSend.append(key, updates[key]);
-      }
-      const response = await axios.post('http://localhost:5000/auth/setup-profile', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setFormData((prev) => ({ ...prev, ...response.data.doctor }));
+      await setupProfile("update", updates);
       toast.success('Profile updated successfully');
       setIsEditingProfile(false);
     } catch (error) {
-      toast.error('Failed to update profile');
+      toast.error('Failed to update profile: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -94,14 +93,11 @@ export function Profile() {
       if (formData.profilePhoto) {
         formDataToSend.append("profilePhoto", formData.profilePhoto);
       }
-      const response = await axios.post('http://localhost:5000/auth/setup-profile', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setFormData((prev) => ({ ...prev, ...response.data.doctor }));
+      await setupProfile("3", formDataToSend);
       toast.success('Profile photo updated successfully');
       setIsEditingPhoto(false);
     } catch (error) {
-      toast.error('Failed to update photo');
+      toast.error('Failed to update photo: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +114,8 @@ export function Profile() {
       phone: user?.phone || '',
       profilePhoto: user?.profilePhoto || null,
       bio: user?.bio || '',
+      age: user?.age || 0,  // New field
+      gender: user?.gender || '',  // New field
     });
   };
 
@@ -197,6 +195,38 @@ export function Profile() {
                 transition={{ delay: 0.2 }}
                 className="form-group"
               >
+                <label className="form-label">Age</label>
+                <input
+                  type="number"
+                  value={formData.age}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                  className="form-input"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3}}
+                className="form-group"
+              >
+                <label className="form-label">Gender</label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                  className="form-input"
+                >
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </motion.div>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="form-group"
+              >
                 <label className="form-label">Hospital/Clinic</label>
                 <input
                   type="text"
@@ -208,7 +238,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.5 }}
                 className="form-group"
               >
                 <label className="form-label">Specialization</label>
@@ -222,7 +252,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.6 }}
                 className="form-group"
               >
                 <label className="form-label">Years of Experience</label>
@@ -236,7 +266,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.7 }}
                 className="form-group"
               >
                 <label className="form-label">Email</label>
@@ -251,7 +281,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.8 }}
                 className="form-group"
               >
                 <label className="form-label">Phone</label>
@@ -265,7 +295,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.7 }}
+                transition={{ delay: 0.9 }}
                 className="form-group"
               >
                 <label className="form-label">Bio</label>
@@ -415,6 +445,14 @@ export function Profile() {
                   <div className="detail-item">
                     <Award className="detail-icon" />
                     <span>{user?.yearsOfExperience} years</span>
+                  </div>
+                  <div className="detail-item">
+                    <User className="detail-icon" />
+                    <span>Age: {user?.age || 'Not provided'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <User className="detail-icon" />
+                    <span>Gender: {user?.gender || 'Not provided'}</span>
                   </div>
                 </motion.div>
               </div>

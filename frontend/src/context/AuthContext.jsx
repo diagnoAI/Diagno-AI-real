@@ -103,14 +103,16 @@ export function AuthProvider({ children }) {
       const formData = new FormData();
       formData.append("step", step);
       for (const key in data) {
-        formData.append(key, data[key]);
+        if (data[key] !== null && data[key] !== undefined) {
+          formData.append(key, data[key]);
+        }
       }
 
       console.log("Sending setup-profile request with token:", token);
       const response = await axios.post('http://localhost:5000/auth/setup-profile', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}` // Explicitly set the header here
+          'Authorization': `Bearer ${token}`
         }
       });
 
