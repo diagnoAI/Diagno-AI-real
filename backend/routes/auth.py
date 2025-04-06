@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from pymongo import MongoClient
-from flask_bcrypt import Bcrypt
+# from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
 import datetime
@@ -20,7 +21,7 @@ auth_bp = Blueprint("auth", __name__)
 CORS(auth_bp, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
 
 # Initialize bcrypt
-bcrypt = Bcrypt()
+# bcrypt = Bcrypt()
 
 # MongoDB connection
 def get_db():
@@ -47,7 +48,7 @@ def signup():
     if doctors.find_one({"email": email}):
         return jsonify({"message": "Email already exists"}), 400
 
-    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+    hashed_password = generate_password_hash(password)
     doctor = {
         "fullName": full_name,
         "email": email,
@@ -148,7 +149,7 @@ def login():
     password = data.get("password")
 
     doctor = doctors.find_one({"email": email})
-    if not doctor or not bcrypt.check_password_hash(doctor["password"], password):
+    if not doctor or not check_password_hash(doctor["password"], password):
         return jsonify({"message": "Invalid email or password"}), 401
     if not doctor["isVerified"]:
         return jsonify({"message": "Please verify your email first", "doctorId": str(doctor["_id"])}), 403
