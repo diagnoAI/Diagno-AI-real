@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { AnalyzingAnimation } from '../../components/AnalyzingAnimation';
 import './Upload.css';
+import {useAuth} from '../../context/AuthContext';
 
 export function Upload() {
   const [patientName, setPatientName] = useState('');
@@ -17,7 +18,14 @@ export function Upload() {
   const [ctScanUrl, setCtScanUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { upload } = useAuth(); // Assuming you have an upload function in your AuthContext
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
+    setDate(formattedDate);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
@@ -37,24 +45,35 @@ export function Upload() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!patientName || !patientId || !age || !gender || !date || !ctScan) {
       toast.error('Please fill all fields and upload a CT scan');
       return;
     }
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setIsLoading(false);
-      setIsAnalyzing(true);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      setIsAnalyzing(false);
-      navigate('/dashboard/report-generated');
-    } catch (error) {
-      toast.error('Upload failed');
-      setIsLoading(false);
-    }
-  };
 
+    setIsLoading(true);
+
+    try {
+    //   await upload({ patientName, patientId, age, gender, date, ctScan }); // Call the upload function from context
+    //   toast.success('CT scan uploaded successfully!');
+    //   setIsLoading(false);
+    //   setIsAnalyzing(true);
+
+    //   // Simulate analysis with a timeout
+    //   await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    //   navigate('/dashboard/report-generated');
+    //   setIsAnalyzing(false);
+    // } catch (error) {
+    //   toast.error('Upload failed. Please try again.');
+    //   setIsLoading(false);
+    navigate('/dashboard/report-generated');
+    } catch (error) {
+      toast.error('Upload failed. Please try again.');
+    }
+  
+  }
+ 
   if (isAnalyzing) {
     return <AnalyzingAnimation />;
   }
@@ -150,8 +169,10 @@ export function Upload() {
             <input
               id="date"
               type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              
+              value= {date}
+              //onChange={(e) => setDate()}
+              disabled
               className="form-input"
             />
           </motion.div>

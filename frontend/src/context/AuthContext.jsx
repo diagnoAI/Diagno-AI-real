@@ -136,6 +136,16 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const upload = async ({ patientName, patientId, age, gender, date, ctScan }) => {
+    // // Here you can process the upload, no API call necessary for your case
+    // console.log('Uploading CT Scan:', { patientName, patientId, age, gender, date, ctScan });
+    // return new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate some upload delay
+      const data = {patientName, patientId, age, gender, date, ctScan};
+      console.log(data)
+   
+    
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);

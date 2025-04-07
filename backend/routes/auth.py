@@ -153,8 +153,6 @@ def login():
         return jsonify({"message": "Invalid email or password"}), 401
     if not doctor["isVerified"]:
         return jsonify({"message": "Please verify your email first", "doctorId": str(doctor["_id"])}), 403
-    if not doctor["profileSetupCompleted"]:
-        return jsonify({"message": "Please complete your profile setup", "doctorId": str(doctor["_id"])}), 403
 
     access_token = create_access_token(identity=str(doctor["_id"]))
     return jsonify({
