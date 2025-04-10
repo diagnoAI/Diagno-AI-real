@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, FileText, HeartPulse, Activity, Calendar, Stethoscope } from 'lucide-react';
+import { Users, FileText, Activity, HeartPulse, Stethoscope } from 'lucide-react';
 import { Line, Pie } from 'react-chartjs-2';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -17,7 +17,7 @@ import {
 } from 'chart.js';
 import './DashboardHome.css';
 
-// Register Chart.js components, including Filler
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,115 +30,81 @@ ChartJS.register(
   Filler
 );
 
-// Detection Progress Circle
-const DetectionProgress = ({ percentage }) => (
-  <div className="relative w-12 h-12">
-    <svg className="w-full h-full" viewBox="0 0 36 36">
-      <path
-        className="text-blue-100"
-        fill="none"
-        strokeWidth="3"
-        stroke="currentColor"
-        d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-      />
-      <path
-        className="text-blue-600"
-        fill="none"
-        strokeWidth="3"
-        strokeDasharray={`${percentage}, 100`}
-        stroke="currentColor"
-        d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-      />
-    </svg>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <span className="text-xs font-medium text-blue-900">{percentage}%</span>
+// Slider Component
+const Slider = ({ images }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }, 5000); // Change slide every 3 seconds
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  return (
+    <div className="slider-container">
+      <div className="slider-wrapper" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+        {images.map((img, index) => (
+          <div key={index} className="slide">
+            {img ? <img src={img} alt={`Slide ${index + 1}`} className="slide-image" /> : <div className="slide-placeholder">Add Image {index + 1}</div>}
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
-
-// Initial stats data with tooltip text
-const initialStats = [
-  { label: 'Patients Today', value: 32, icon: Users, color: 'blue-600', tooltip: 'Patients seen today' },
-  { label: 'Kidney Stone Scans', value: 15, icon: FileText, color: 'blue-500', tooltip: 'Scans performed today' },
-  { label: 'Detection Accuracy', value: 92, icon: HeartPulse, color: 'blue-600', isProgress: true, tooltip: 'Accuracy of detection model' },
-  { label: 'High Risk Patients', value: 8, icon: Activity, color: 'blue-500', tooltip: 'Patients at high risk' },
-  { label: 'Appointments', value: 10, icon: Calendar, color: 'blue-400', tooltip: 'Scheduled appointments' },
-];
-
-// Quick stats data
-const quickStats = [
-  { label: 'Total Scans (Month)', value: 245 },
-  { label: 'Avg. Risk Score', value: '7.8' },
-];
-
-// Recent activity data
-const recentActivity = [
-  { id: 1, action: 'Scan Completed', patient: 'John Doe', time: '10:30 AM' },
-  { id: 2, action: 'High Risk Detected', patient: 'Jane Smith', time: '9:15 AM' },
-  { id: 3, action: 'Appointment Scheduled', patient: 'Mike Johnson', time: '8:45 AM' },
-];
-
-// Simulated trend data for the graph (past 7 days)
-const initialTrendData = [12, 15, 10, 18, 14, 20, 15];
-
-// Risk distribution data for the pie chart
-const riskDistributionData = {
-  labels: ['Low Risk', 'Medium Risk', 'High Risk'],
-  datasets: [
-    {
-      data: [60, 30, 10],
-      backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
-      borderWidth: 1,
-      borderColor: '#ffffff',
-    },
-  ],
+  );
 };
 
 export function DashboardHome() {
-  const { user, isDarkMode } = useAuth();
-  const [stats, setStats] = useState(initialStats);
-  const [trendData, setTrendData] = useState(initialTrendData);
+  const { user, isDarkMode, fetchStats } = useAuth();
+  const [stats, setStats] = useState({
+    totalPatients: 0,
+    scansToday: 0,
+    highRiskPatients: 0,
+    detectionAccuracy: 0,
+  });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [riskDistribution, setRiskDistribution] = useState({ Low: 0, Medium: 0, High: 0 });
+  const [trendData, setTrendData] = useState([0, 0, 0, 0, 0, 0, 0]);
 
-  // Simulate real-time updates
+  // Fetch initial stats
+  useEffect(() => {
+    const loadStats = async () => {
+      const data = await fetchStats();
+      if (data) {
+        setStats({
+          totalPatients: data.stats.totalPatients,
+          scansToday: data.stats.scansToday,
+          highRiskPatients: data.stats.highRiskPatients,
+          detectionAccuracy: data.stats.detectionAccuracy,
+        });
+        setRecentActivity(data.recentActivity);
+        setRiskDistribution(data.riskDistribution);
+        setTrendData(data.trendData);
+      }
+    };
+    loadStats();
+  }, [fetchStats]);
+
+  // Real-time updates with debouncing handled in fetchStats
   useEffect(() => {
     const interval = setInterval(() => {
-      setStats((prevStats) =>
-        prevStats.map((stat) => {
-          if (stat.label === 'Patients Today') {
-            return { ...stat, value: stat.value + Math.floor(Math.random() * 2) };
-          }
-          if (stat.label === 'Kidney Stone Scans') {
-            return { ...stat, value: stat.value + Math.floor(Math.random() * 1) };
-          }
-          if (stat.label === 'High Risk Patients') {
-            return { ...stat, value: stat.value + Math.floor(Math.random() * 1) };
-          }
-          if (stat.label === 'Appointments') {
-            return { ...stat, value: stat.value + Math.floor(Math.random() * 1) };
-          }
-          if (stat.label === 'Detection Accuracy') {
-            const accuracy = Math.min(100, stat.value + Math.floor(Math.random() * 2));
-            return { ...stat, value: accuracy };
-          }
-          return stat;
-        })
-      );
-
-      // Update trend data
-      setTrendData((prevData) => {
-        const newData = [...prevData];
-        newData.shift();
-        newData.push(Math.floor(Math.random() * 10 + 10));
-        return newData;
+      fetchStats().then((data) => {
+        if (data) {
+          setStats((prev) => ({
+            ...prev,
+            totalPatients: data.stats.totalPatients,
+            scansToday: data.stats.scansToday,
+            highRiskPatients: data.stats.highRiskPatients,
+            detectionAccuracy: data.stats.detectionAccuracy,
+          }));
+          setRecentActivity(data.recentActivity);
+          setRiskDistribution(data.riskDistribution);
+          setTrendData(data.trendData);
+        }
       });
-    }, 5000);
-
+    }, 5000); // Update every 5 seconds, debounced to 2 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchStats]);
 
   // Card animation
   const cardVariants = {
@@ -146,36 +112,12 @@ export function DashboardHome() {
     visible: (i) => ({
       opacity: 1,
       y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.4,
-        ease: 'easeOut',
-      },
+      transition: { delay: i * 0.1, duration: 0.4, ease: 'easeOut' },
     }),
-    hover: {
-      y: -5,
-      boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut',
-      },
-    },
+    hover: { y: -5, boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)', transition: { duration: 0.3, ease: 'easeInOut' } },
   };
 
-  // Section animation for charts
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  // Graph data (Line chart) with gradient fill
+  // Graph data
   const graphData = {
     labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
     datasets: [
@@ -201,43 +143,19 @@ export function DashboardHome() {
   const graphOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a',
-        titleColor: '#ffffff',
-        bodyColor: '#e0f2fe',
-      },
-    },
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a', titleColor: '#ffffff', bodyColor: '#e0f2fe' } },
     scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          color: isDarkMode ? '#d1d5db' : '#6b7280',
-        },
-      },
-      y: {
-        grid: {
-          color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb',
-        },
-        ticks: {
-          color: isDarkMode ? '#d1d5db' : '#6b7280',
-          beginAtZero: true,
-        },
-      },
+      x: { grid: { display: false }, ticks: { color: isDarkMode ? '#d1d5db' : '#6b7280' } },
+      y: { grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb' }, ticks: { color: isDarkMode ? '#d1d5db' : '#6b7280', beginAtZero: true } },
     },
   };
 
-  // Risk distribution data with dark mode support
-  const riskDistributionData = {
+  // Pie chart data
+  const pieData = {
     labels: ['Low Risk', 'Medium Risk', 'High Risk'],
     datasets: [
       {
-        data: [60, 30, 10],
+        data: [riskDistribution.Low, riskDistribution.Medium, riskDistribution.High],
         backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
         borderWidth: 1,
         borderColor: isDarkMode ? '#1f2937' : '#ffffff',
@@ -245,27 +163,22 @@ export function DashboardHome() {
     ],
   };
 
-  // Pie chart options with dark mode support
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          color: isDarkMode ? '#d1d5db' : '#1e40af',
-          font: {
-            size: 12,
-          },
-        },
-      },
-      tooltip: {
-        backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a',
-        titleColor: '#ffffff',
-        bodyColor: '#e0f2fe',
-      },
+      legend: { position: 'bottom', labels: { color: isDarkMode ? '#d1d5db' : '#1e40af', font: { size: 12 } } },
+      tooltip: { backgroundColor: isDarkMode ? '#1e3a8a' : '#1e3a8a', titleColor: '#ffffff', bodyColor: '#e0f2fe' },
     },
   };
+
+  // Slider images (all empty for custom addition)
+  const sliderImages = [
+    'src/assets/1344450.jpeg',
+    'src/assets/doctor.jpg',
+    'src/assets/Stone- (26).jpg',
+    'src/assets/upload.jpg',
+  ];
 
   return (
     <div className={`dashboard-home-container ${isDarkMode ? 'dark' : ''}`}>
@@ -276,122 +189,83 @@ export function DashboardHome() {
         className="dashboard-home-header"
       >
         <div className="flex items-center gap-3">
-          <Stethoscope className="h-7 w-7 text-blue-600" />
-          <h2 className="dashboard-home-title">
-            Welcome, Dr. {user?.fullname || 'Doctor'}
-          </h2>
+          <Stethoscope className="h-8 w-8 text-blue-600" />
+          <h1 className="dashboard-home-title">Welcome, Dr. {user?.fullName || 'Doctor'}</h1>
         </div>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="dashboard-home-text"
-        >
-          Real-time kidney stone detection insights at your fingertips.
-        </motion.p>
+        <p className="dashboard-home-subtitle">Real-time kidney stone detection insights at your fingertips.</p>
       </motion.div>
 
-      {/* Main Stats Section */}
-      <div className="stats-section">
-        <h3 className="section-title">Today’s Overview</h3>
+      {/* Overview Section */}
+      <div className="overview-section">
+        <h2 className="section-title">Overview</h2>
         <div className="stats-grid">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              custom={index}
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="stats-card neumorphic relative overflow-hidden"
-            >
-              <div className="relative z-10 p-3 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-600">{stat.label}</p>
-                  {stat.isProgress ? (
-                    <DetectionProgress percentage={stat.value} />
-                  ) : (
-                    <p className="mt-1 text-xl font-semibold text-gray-900">{stat.value}</p>
-                  )}
-                </div>
-                <div className="p-1 rounded-full bg-blue-50">
-                  <stat.icon className={`h-4 w-4 text-${stat.color}`} />
-                </div>
-              </div>
-              <span className="stats-tooltip">{stat.tooltip}</span>
-            </motion.div>
+          <motion.div custom={0} variants={cardVariants} initial="hidden" animate="visible" whileHover="hover" className="stats-card">
+            <div className="card-content">
+              <p className="card-label">Total Patients</p>
+              <p className="card-value">{stats.totalPatients}</p>
+              <Users className="card-icon text-blue-600" />
+            </div>
+          </motion.div>
+          <motion.div custom={1} variants={cardVariants} initial="hidden" animate="visible" whileHover="hover" className="stats-card">
+            <div className="card-content">
+              <p className="card-label">Scans Today</p>
+              <p className="card-value">{stats.scansToday}</p>
+              <FileText className="card-icon text-blue-500" />
+            </div>
+          </motion.div>
+          <motion.div custom={2} variants={cardVariants} initial="hidden" animate="visible" whileHover="hover" className="stats-card">
+            <div className="card-content">
+              <p className="card-label">High Risk Patients</p>
+              <p className="card-value">{stats.highRiskPatients}</p>
+              <Activity className="card-icon text-blue-500" />
+            </div>
+          </motion.div>
+          <motion.div custom={3} variants={cardVariants} initial="hidden" animate="visible" whileHover="hover" className="stats-card">
+            <div className="card-content">
+              <p className="card-label">Detection Accuracy</p>
+              <p className="card-value">{stats.detectionAccuracy}%</p>
+              <HeartPulse className="card-icon text-blue-600" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* How Our App Works Slider */}
+      <div className="slider-section">
+        <h2 className="section-title">How Our App Works</h2>
+        <Slider images={sliderImages} />
+      </div>
+
+      {/* Recent Patients Section */}
+      <div className="recent-patients-section">
+        <h2 className="section-title">Recent Patients</h2>
+        <div className="recent-patients-card">
+          {recentActivity.map((patient, index) => (
+            <div key={patient.id} className="patient-item">
+              <p className="patient-name">Patient {index + 1}:</p>
+              <p><span className="label">Name:</span> {patient.patientName}</p>
+              <p><span className="label">Status:</span> {patient.hasStone ? 'Stone Detected' : 'No Stone'}</p>
+              <p><span className="label">Time:</span> {patient.time}</p>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Quick Stats Section */}
-      <div className="quick-stats-section">
-        <h3 className="section-title">Monthly Summary</h3>
-        <div className="quick-stats-grid">
-          {quickStats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              custom={index}
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              className="quick-stats-card neumorphic"
-            >
-              <p className="text-xs font-medium text-gray-600">{stat.label}</p>
-              <p className="mt-1 text-lg font-semibold text-gray-900">{stat.value}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Activity Section */}
-      <div className="recent-activity-section">
-        <h3 className="section-title">Recent Activity</h3>
-        <div className="recent-activity-card neumorphic">
-          <ul className="divide-y divide-gray-200">
-            {recentActivity.map((activity) => (
-              <li key={activity.id} className="py-3 px-4 flex justify-between items-center">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                  <p className="text-xs text-gray-600">{activity.patient}</p>
-                </div>
-                <p className="text-xs text-gray-500">{activity.time}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Risk Distribution Section with Animation */}
-      <motion.div
-        variants={sectionVariants}
-        initial="hidden"
-        animate="visible"
-        className="risk-distribution-section"
-      >
-        <h3 className="section-title">Patient Risk Distribution</h3>
-        <div className="risk-distribution-card neumorphic">
-          <div className="relative h-64">
-            <Pie data={riskDistributionData} options={pieOptions} />
+      {/* Charts Section */}
+      <div className="charts-section">
+        <motion.div className="risk-distribution-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <h2 className="section-title">Patient Risk Distribution</h2>
+          <div className="chart-container">
+            <Pie data={pieData} options={pieOptions} />
           </div>
-        </div>
-      </motion.div>
-
-      {/* Graph Section with Animation */}
-      <motion.div
-        variants={sectionVariants}
-        initial="hidden"
-        animate="visible"
-        className="graph-section"
-      >
-        <h3 className="section-title">Kidney Stone Scans (Last 7 Days)</h3>
-        <div className="graph-card neumorphic">
-          <div className="relative h-64">
+        </motion.div>
+        <motion.div className="graph-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <h2 className="section-title">Kidney Stone Scans (Last 7 Days)</h2>
+          <div className="chart-container">
             <Line data={graphData} options={graphOptions} />
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

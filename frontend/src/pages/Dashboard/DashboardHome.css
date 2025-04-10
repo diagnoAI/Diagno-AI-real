@@ -5,6 +5,8 @@
   background: linear-gradient(145deg, #f7fafc 0%, #e3f2fd 100%);
   min-height: 100vh;
   position: relative;
+  color: #1e40af;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Subtle Background Pattern */
@@ -13,7 +15,7 @@
   position: absolute;
   inset: 0;
   background: url('https://www.transparenttextures.com/patterns/white-wave.png');
-  opacity: 0.03;
+  opacity: 0.05;
   z-index: 0;
 }
 
@@ -22,176 +24,227 @@
   margin-bottom: 2rem;
   position: relative;
   z-index: 1;
+  text-align: center;
 }
 
 .dashboard-home-title {
-  font-size: 1.75rem;
-  font-weight: 600;
+  font-size: 2.25rem;
+  font-weight: 700;
   color: #1e40af;
+  margin-bottom: 0.5rem;
 }
 
-.dashboard-home-text {
-  font-size: 0.95rem;
+.dashboard-home-subtitle {
+  font-size: 1rem;
   color: #6b7280;
   font-weight: 400;
 }
 
 /* Section Title */
 .section-title {
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #1e40af;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
 }
 
-/* Main Stats Section */
-.stats-section {
+/* Overview Section */
+.overview-section {
   margin-bottom: 2rem;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
   z-index: 1;
 }
 
 .stats-card {
-  position: relative;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  background: #f7fafc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Tooltip for Stats Cards */
-.stats-tooltip {
-  position: absolute;
-  top: -2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #2563eb;
-  color: #ffffff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  display: none;
-  z-index: 10;
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.stats-card:hover .stats-tooltip {
-  display: block;
+.card-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
 }
 
-/* Quick Stats Section */
-.quick-stats-section {
+.card-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 1rem;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  color: inherit;
+}
+
+/* Slider Section */
+.slider-section {
   margin-bottom: 2rem;
 }
 
-.quick-stats-grid {
+.slider-container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 808px;
+  margin: 0 auto;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.slider-wrapper {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  height: 566px; /* Match your image height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 1rem;
+}
+
+.slide-placeholder {
+  color: #6b7280;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Recent Patients Section */
+.recent-patients-section {
+  margin-bottom: 2rem;
+}
+
+.recent-patients-card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.patient-item {
+  margin-bottom: 1.5rem;
+}
+
+.patient-item:last-child {
+  margin-bottom: 0;
+}
+
+.patient-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.patient-item p {
+  font-size: 0.875rem;
+  color: #1e40af;
+  margin: 0.25rem 0;
+}
+
+/* Charts Section */
+.charts-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-.quick-stats-card {
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  background: #f7fafc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Recent Activity Section */
-.recent-activity-section {
-  margin-bottom: 2rem;
-}
-
-.recent-activity-card {
-  border-radius: 0.75rem;
-  padding: 0.5rem;
-  background: #f7fafc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* Risk Distribution Section */
-.risk-distribution-section {
-  margin-bottom: 2rem;
-}
-
-.risk-distribution-card {
-  border-radius: 0.75rem;
+.risk-distribution-card, .graph-card {
+  border-radius: 1rem;
   padding: 1.5rem;
-  background: #f7fafc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: #ffffff;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Graph Section */
-.graph-section {
-  margin-bottom: 2rem;
-}
-
-.graph-card {
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  background: #f7fafc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+.chart-container {
+  height: 300px;
+  width: 100%;
 }
 
 /* Dark Mode */
 .dashboard-home-container.dark {
   background: linear-gradient(145deg, #1e3a8a 0%, #3b82f6 100%);
-}
-
-.dashboard-home-container.dark .section-title,
-.dashboard-home-container.dark .dashboard-home-title {
   color: #e0f2fe;
 }
 
-.dashboard-home-container.dark .dashboard-home-text {
+.dashboard-home-container.dark .dashboard-home-title {
+  color: #ffffff;
+}
+
+.dashboard-home-container.dark .dashboard-home-subtitle,
+.dashboard-home-container.dark .card-label,
+.dashboard-home-container.dark .label,
+.dashboard-home-container.dark .slide-placeholder {
   color: #d1d5db;
 }
 
+.dashboard-home-container.dark .section-title {
+  color: #ffffff;
+}
+
+.dashboard-home-container.dark .card-value,
+.dashboard-home-container.dark .patient-name,
+.dashboard-home-container.dark .patient-item p {
+  color: #e0f2fe;
+}
+
 .dashboard-home-container.dark .stats-card,
-.dashboard-home-container.dark .quick-stats-card,
-.dashboard-home-container.dark .recent-activity-card,
+.dashboard-home-container.dark .recent-patients-card,
 .dashboard-home-container.dark .risk-distribution-card,
-.dashboard-home-container.dark .graph-card {
+.dashboard-home-container.dark .graph-card,
+.dashboard-home-container.dark .slider-container,
+.dashboard-home-container.dark .slide {
   background: #2d3748;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dashboard-home-container.dark .stats-card p,
-.dashboard-home-container.dark .quick-stats-card p,
-.dashboard-home-container.dark .recent-activity-card p {
-  color: #e0f2fe;
-}
-
-/* Dark Mode for Tooltips */
-.dashboard-home-container.dark .stats-tooltip {
-  background: #1e3a8a;
-  color: #e0f2fe;
-  border: 1px solid #d1d5db;
-}
-
-/* Dark Mode for Detection Progress Circle */
-.dashboard-home-container.dark .text-blue-100 {
-  color: #4b5563;
-}
-
-.dashboard-home-container.dark .text-blue-600 {
+.dashboard-home-container.dark .card-icon {
   color: #60a5fa;
 }
 
-.dashboard-home-container.dark .text-blue-900 {
+.dashboard-home-container.dark .chart-container {
   color: #e0f2fe;
 }
 
@@ -205,71 +258,70 @@
     font-size: 1.5rem;
   }
 
-  .dashboard-home-text {
+  .dashboard-home-subtitle {
     font-size: 0.875rem;
   }
 
   .section-title {
-    font-size: 1.125rem;
-  }
-
-  .stats-grid,
-  .quick-stats-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .stats-card,
-  .quick-stats-card {
-    padding: 0.5rem;
-  }
-
-  .stats-card p.text-xl {
     font-size: 1.25rem;
   }
 
-  .stats-card .h-4 {
-    height: 0.875rem;
-    width: 0.875rem;
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .stats-card .w-12 {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .stats-card .text-xs {
-    font-size: 0.65rem;
-  }
-
-  .quick-stats-card p.text-lg {
-    font-size: 1rem;
-  }
-
-  .recent-activity-card {
-    padding: 0.25rem;
-  }
-
-  .recent-activity-card .py-3 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .recent-activity-card .text-sm {
-    font-size: 0.75rem;
-  }
-
-  .recent-activity-card .text-xs {
-    font-size: 0.65rem;
-  }
-
-  .risk-distribution-card,
-  .graph-card {
+  .stats-card {
     padding: 1rem;
   }
 
-  .risk-distribution-card .h-64,
-  .graph-card .h-64 {
-    height: 48rem;
+  .card-value {
+    font-size: 1.5rem;
+  }
+
+  .card-icon {
+    font-size: 1.25rem;
+  }
+
+  .slider-container {
+    height: 566px;
+    max-width: 100%;
+  }
+
+  .slide {
+    height: 566px;
+    padding: 1rem;
+  }
+
+  .recent-patients-card {
+    padding: 1rem;
+  }
+
+  .patient-name {
+    font-size: 1rem;
+  }
+
+  .patient-item p {
+    font-size: 0.75rem;
+  }
+
+  .chart-container {
+    height: 200px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1025px) {
+  .charts-section {
+    grid-template-columns: 1fr;
   }
 }

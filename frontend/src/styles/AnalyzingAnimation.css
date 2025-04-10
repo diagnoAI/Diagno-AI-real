@@ -1,22 +1,135 @@
 .analyzing-animation {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff, #f3e8ff);
+  isolation: isolate; /* Ensures proper layering */
+}
+
+/* Container for Animation Elements */
+.animation-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 40px; /* Space between animation and text */
+}
+
+/* Outer Circle */
+.analyzing-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.analyzing-circle.outer {
+  width: 120px;
+  height: 120px;
+  border: 8px solid rgba(37, 99, 235, 0.8);
+  border-top: 8px solid transparent;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+  transform-origin: center;
+}
+
+/* Inner Circle */
+.analyzing-circle.inner {
+  width: 80px;
+  height: 80px;
+  border: 6px solid rgba(59, 130, 246, 0.6);
+  border-left: 6px solid transparent;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+  transform-origin: center;
+}
+
+/* Orbiting Dots Container */
+.analyzing-dot {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  transform-origin: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #9333ea;
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform-origin: 0 50%;
+  box-shadow: 0 0 5px rgba(147, 51, 234, 0.4);
+}
+
+.dot:nth-child(2) {
+  transform-origin: 100% 50%;
+}
+
+/* Animated Text (Moved Below) */
+.analyzing-text {
+  margin-top: 0; /* Reset margin-top since it's now below */
+  font-size: 1.8rem;
+  color: #1e3a8a;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(30, 58, 138, 0.2);
+  z-index: 1;
+}
+
+/* Background Overlay for Gradient Animation */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(147, 51, 234, 0.1),
+    rgba(255, 255, 255, 0.1)
+  );
+  background-size: 200% 200%;
+  z-index: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .animation-container {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 30px; /* Adjusted spacing for mobile */
   }
-  
-  .analyzing-circle {
-    width: 100px;
-    height: 100px;
-    border: 10px solid #2563eb;
-    border-top: 10px solid transparent;
-    border-radius: 50%;
+
+  .analyzing-circle.outer {
+    width: 90px;
+    height: 90px;
+    border-width: 6px;
   }
-  
+
+  .analyzing-circle.inner {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+  }
+
+  .analyzing-dot {
+    width: 80px;
+    height: 80px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+
   .analyzing-text {
-    margin-top: 20px;
-    font-size: 1.5rem;
-    color: #111827;
+    font-size: 1.4rem;
   }
+}

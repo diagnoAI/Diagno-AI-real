@@ -2,6 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from pymongo import MongoClient
+from gridfs import GridFS
 from dotenv import load_dotenv
 import os
 
@@ -17,6 +18,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 # MongoDB connection
 client = MongoClient("mongodb://localhost:27017/")
 db = client["diagno_ai"]
+fs = GridFS(db)  # Initialize GridFS
 
 # Import and register routes
 from routes.auth import auth_bp

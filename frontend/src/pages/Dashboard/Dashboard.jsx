@@ -16,7 +16,7 @@ import { Menu, ArrowLeft } from 'lucide-react';
 import './Dashboard.css';
 
 export function Dashboard() {
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false); // Default to false, will check localStorage
   const { user, logout, isDarkMode } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -26,8 +26,14 @@ export function Dashboard() {
 
   console.log('Current location in Dashboard:', location.pathname);
 
+  // Check if welcome screen has been shown using localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const welcomeShown = localStorage.getItem('welcomeShown');
+      if (!welcomeShown && user) {
+        setShowWelcome(true); // Show welcome only if not shown before and user is logged in
+      }
+
       const handleResize = () => {
         const mobile = window.innerWidth <= 768;
         console.log('Window width:', window.innerWidth, 'Is mobile:', mobile);
@@ -43,12 +49,18 @@ export function Dashboard() {
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
-  }, []);
+  }, [user]); // Depend on user to trigger only on login
+
+  const handleWelcomeClose = () => {
+    setShowWelcome(false);
+    localStorage.setItem('welcomeShown', 'true'); // Mark welcome as shown
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
     setShowDropdown(false);
+    localStorage.removeItem('welcomeShown'); // Optionally reset on logout
   };
 
   return (
@@ -108,7 +120,7 @@ export function Dashboard() {
           isMobile ? 'mobile' : isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'
         }`}
       >
-        {showWelcome && user && <WelcomeScreen name={user.fullname} onClose={() => setShowWelcome(false)} />}
+        {showWelcome && user && <WelcomeScreen name={user.fullName} onClose={handleWelcomeClose} />}
         <div className="dashboard-main">
           <Routes>
             <Route path="/" element={<DashboardHome />} />

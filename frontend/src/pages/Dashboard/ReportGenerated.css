@@ -1,25 +1,209 @@
 .report-generated-container {
-    border-radius: 0.75rem;
-    padding: 2rem;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.report-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.image-section {
+  text-align: center;
+}
+
+.image-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.report-image {
+  width: 300px; /* Reduced from 400px */
+  height: 300px; /* Reduced from 400px */
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.single-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.report-image-centered {
+  width: 300px; /* Reduced from 400px */
+  height: 300px; /* Reduced from 400px */
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.report-message {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #4b5563;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.view-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.view-btn:hover {
+  background-color: #059669;
+}
+
+.download-btn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.download-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.report-viewer-full {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.report-full-container {
+  position: relative;
+  height: 100%;
+}
+
+.back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background-color: #4b5563;
+}
+
+.report-iframe {
+  width: 100%;
+  height: calc(100% - 4rem);
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .report-generated-container {
+    padding: 1rem;
+    margin: 1rem auto;
   }
-  
-  .report-generated-title {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
+
+  .report-title {
+    font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  
-  .report-generated-text {
-    font-size: 1rem;
-    color: #4b5563;
-    margin-bottom: 2rem;
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Reduced gap for mobile */
+    flex-wrap: nowrap; /* Keep side-by-side */
   }
-  
-  .report-placeholder {
-    background: #f3f4f6;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    color: #6b7280;
+
+  .image-section {
+    flex: 1;
+    max-width: 150px; /* Ensure it fits side-by-side */
   }
+
+  .report-image {
+    width: 150px; /* Reduced from 300px */
+    height: 150px; /* Reduced from 300px */
+  }
+
+  .report-image-centered {
+    width: 150px;
+    height: 150px;
+  }
+
+  .image-label {
+    font-size: 0.9rem;
+  }
+
+  .report-message {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .action-buttons {
+    gap: 0.75rem;
+  }
+
+  .action-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .report-viewer-full {
+    padding: 0.5rem;
+  }
+
+  .report-iframe {
+    height: calc(100% - 3rem);
+  }
+
+  .back-btn {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}

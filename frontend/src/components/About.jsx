@@ -37,7 +37,7 @@ export function About() {
           >
             <div className="about-image-container">
               <img
-                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+                src="src/assets/doctor.jpg"
                 alt="Medical professionals using technology"
                 className="about-image"
               />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './Login.css';
 
@@ -62,6 +63,7 @@ export function Login() {
               id="email"
               type="email"
               value={email}
+              placeholder='Enter your email'
               onChange={(e) => setEmail(e.target.value)}
               className={`form-input ${errors.email ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
               disabled={isLoading}
@@ -75,6 +77,7 @@ export function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
               className={`form-input ${errors.password ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
               disabled={isLoading}
             />

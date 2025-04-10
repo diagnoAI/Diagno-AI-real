@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import debounce from 'lodash.debounce'; // Import lodash debounce
 
 const AuthContext = createContext();
 
@@ -13,7 +14,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Set axios default headers for authenticated requests
   useEffect(() => {
     if (token && !user) {
       console.log("Setting Authorization header with token:", token);
@@ -40,18 +40,18 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const signup = async ({ email, password, name }) => {
+  const signup = async ({ email, password, fullname }) => {
     try {
       setLoading(true);
       const response = await axios.post('http://localhost:5000/auth/signup', {
         email,
         password,
-        name,
+        fullname,
         confirmPassword: password
       });
 
       localStorage.setItem('userEmail', email);
-      setUser({ email, name, doctorId: response.data.doctorId, isVerified: false });
+      setUser({ email, fullname, doctorId: response.data.doctorId, isVerified: false });
 
       return response.data;
     } catch (error) {
@@ -137,13 +137,27 @@ export function AuthProvider({ children }) {
   };
 
   const upload = async ({ patientName, patientId, age, gender, date, ctScan }) => {
-    // // Here you can process the upload, no API call necessary for your case
-    // console.log('Uploading CT Scan:', { patientName, patientId, age, gender, date, ctScan });
-    // return new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate some upload delay
-      const data = {patientName, patientId, age, gender, date, ctScan};
-      console.log(data)
-   
-    
+    const formData = new FormData();
+    formData.append("patientName", patientName);
+    formData.append("patientId", patientId);
+    formData.append("age", age);
+    formData.append("gender", gender);
+    formData.append("date", date);
+    formData.append("ctScan", ctScan);
+
+    try {
+      console.log("Sending upload request with token:", token);
+      const response = await axios.post('http://localhost:5000/patient/upload', formData, {
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+      });
+      console.log("Upload response:", response.data);
+      toast.success(response.data.message);
+      return response.data;
+    } catch (error) {
+      console.error("Upload error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Upload failed');
+      throw error;
+    }
   };
 
   const logout = () => {
@@ -157,6 +171,20 @@ export function AuthProvider({ children }) {
 
   const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
+  // Debounced fetchStats function
+  const fetchStats = debounce(async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/patient/stats', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Fetch stats error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Failed to fetch stats');
+      return null;
+    }
+  }, 2000); // 2-second debounce
+
   return (
     <AuthContext.Provider
       value={{
@@ -167,11 +195,13 @@ export function AuthProvider({ children }) {
         verifyOTP,
         resendOTP,
         setupProfile,
+        upload,
         logout,
         isDarkMode,
         toggleDarkMode,
         isResending,
-        loading
+        loading,
+        fetchStats
       }}
     >
       {children}

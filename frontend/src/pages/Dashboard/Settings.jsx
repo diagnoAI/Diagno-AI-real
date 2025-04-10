@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Lock, Eye, EyeOff, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Settings.css';
 
+
+// Redirect if no user
+ 
+
 export function Settings() {
-  const { isDarkMode, toggleDarkMode } = useAuth();
+  const { user, isDarkMode, toggleDarkMode } = useAuth();
 
   const [notifications, setNotifications] = useState({
     email: true,

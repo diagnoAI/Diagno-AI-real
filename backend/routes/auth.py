@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from pymongo import MongoClient
-# from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
@@ -20,9 +19,6 @@ load_dotenv()
 auth_bp = Blueprint("auth", __name__)
 CORS(auth_bp, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
 
-# Initialize bcrypt
-# bcrypt = Bcrypt()
-
 # MongoDB connection
 def get_db():
     client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017/"))
@@ -34,7 +30,6 @@ otp_collection = db["otp_verifications"]
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
-    """Signup and send OTP"""
     data = request.json
     full_name = data.get("name")
     email = data.get("email")
@@ -55,14 +50,14 @@ def signup():
         "password": hashed_password,
         "dob": None,
         "gender": "",
-        "age": 0,  # New field
+        "age": 0,
         "hospitalName": "",
         "specialization": "",
         "licenseNumber": "",
         "yearsOfExperience": 0,
-        "profilePhoto": "",  # Store as base64 string
-        "phone": "",  # New field
-        "bio": "",  # New field
+        "profilePhoto": "",
+        "phone": "",
+        "bio": "",
         "isVerified": False,
         "profileSetupCompleted": False,
         "createdAt": datetime.datetime.utcnow(),
@@ -70,11 +65,9 @@ def signup():
     }
     doctor_id = doctors.insert_one(doctor).inserted_id
 
-    # Generate and send OTP
     otp = str(random.randint(100000, 999999))
     print(f"Generated OTP: {otp}")
 
-    # Store OTP in database with expiration
     otp_collection.insert_one({
         "email": email,
         "otp": otp,
@@ -88,7 +81,6 @@ def signup():
 
 @auth_bp.route("/verify-otp", methods=["POST"])
 def verify_otp():
-    """Verify OTP and issue JWT token"""
     data = request.json
     email = data.get("email")
     otp = data.get("otp")
@@ -110,7 +102,6 @@ def verify_otp():
 
 @auth_bp.route("/resend-otp", methods=["POST"])
 def resend_otp():
-    """Resend OTP if expired or not received"""
     data = request.json
     email = data.get("email")
 
@@ -120,11 +111,9 @@ def resend_otp():
     if doctor["isVerified"]:
         return jsonify({"message": "Email is already verified"}), 400
 
-    # Generate a new OTP
     new_otp = str(random.randint(100000, 999999))
     print(f"Resent OTP: {new_otp}")
 
-    # Update or insert OTP in database
     otp_collection.update_one(
         {"email": email},
         {
@@ -143,7 +132,6 @@ def resend_otp():
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    """Login"""
     data = request.json
     email = data.get("email")
     password = data.get("password")
@@ -163,22 +151,21 @@ def login():
             "fullName": doctor["fullName"],
             "email": doctor["email"],
             "hospitalName": doctor["hospitalName"],
-            "profilePhoto": doctor["profilePhoto"],  # Base64 string
+            "profilePhoto": doctor["profilePhoto"],
             "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
             "gender": doctor["gender"],
-            "age": doctor["age"],  # New field
+            "age": doctor["age"],
             "specialization": doctor["specialization"],
             "licenseNumber": doctor["licenseNumber"],
             "yearsOfExperience": doctor["yearsOfExperience"],
-            "phone": doctor["phone"],  # New field
-            "bio": doctor["bio"]  # New field
+            "phone": doctor["phone"],
+            "bio": doctor["bio"]
         }
     }), 200
 
 @auth_bp.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
-    """Fetch doctor profile"""
     doctor_id = get_jwt_identity()
     doctor = doctors.find_one({"_id": ObjectId(doctor_id)})
     if not doctor:
@@ -190,22 +177,21 @@ def get_profile():
             "fullName": doctor["fullName"],
             "email": doctor["email"],
             "hospitalName": doctor["hospitalName"],
-            "profilePhoto": doctor["profilePhoto"],  # Base64 string
+            "profilePhoto": doctor["profilePhoto"],
             "dob": doctor["dob"].isoformat() if doctor["dob"] else None,
             "gender": doctor["gender"],
-            "age": doctor["age"],  # New field
+            "age": doctor["age"],
             "specialization": doctor["specialization"],
             "licenseNumber": doctor["licenseNumber"],
             "yearsOfExperience": doctor["yearsOfExperience"],
-            "phone": doctor["phone"],  # New field
-            "bio": doctor["bio"]  # New field
+            "phone": doctor["phone"],
+            "bio": doctor["bio"]
         }
     }), 200
 
 @auth_bp.route("/setup-profile", methods=["POST"])
 @jwt_required()
 def setup_profile():
-    """Update doctor profile based on step"""
     doctor_id = get_jwt_identity()
     data = request.form if request.form else request.json
     step = data.get("step")
@@ -221,14 +207,14 @@ def setup_profile():
     if step == "1":
         full_name = data.get("fullName")
         dob = data.get("dob")
-        gender = data.get("gender")  # New field
+        gender = data.get("gender")
 
         if not all([full_name, dob, gender]):
             return jsonify({"message": "All fields are required for step 1"}), 400
 
         updates["fullName"] = full_name
         updates["dob"] = datetime.datetime.strptime(dob, "%Y-%m-%d")
-        updates["gender"] = gender # New field
+        updates["gender"] = gender
 
     elif step == "2":
         hospital_name = data.get("hospitalName")
@@ -247,11 +233,9 @@ def setup_profile():
     elif step == "3":
         profile_photo = request.files.get("profilePhoto") if "profilePhoto" in request.files else None
         if profile_photo:
-            # Read the image file
             image_data = profile_photo.read()
             image_size_mb = len(image_data) / (1024 * 1024)
 
-            # Compress the image if it's larger than 1MB
             if image_size_mb > 1:
                 print(f"Compressing image: Original size = {image_size_mb:.2f} MB")
                 try:
@@ -261,7 +245,6 @@ def setup_profile():
                 compressed_size_mb = len(image_data) / (1024 * 1024)
                 print(f"Compressed size = {compressed_size_mb:.2f} MB")
 
-            # Convert the (possibly compressed) image to base64
             base64_image = base64.b64encode(image_data).decode("utf-8")
             mime_type = profile_photo.mimetype
             base64_image = f"data:{mime_type};base64,{base64_image}"
@@ -271,15 +254,15 @@ def setup_profile():
             updates["profilePhoto"] = doctor.get("profilePhoto", "")
             updates["profileSetupCompleted"] = True
 
-    elif step == "update":  # New step for profile editing
+    elif step == "update":
         full_name = data.get("fullName")
         hospital_name = data.get("hospitalName")
         specialization = data.get("specialization")
         years_of_experience = data.get("yearsOfExperience")
         phone = data.get("phone")
         bio = data.get("bio")
-        age = data.get("age")  # New field
-        gender = data.get("gender")  # New field
+        age = data.get("age")
+        gender = data.get("gender")
 
         if not all([full_name, hospital_name, specialization, years_of_experience, phone, bio, age, gender]):
             return jsonify({"message": "All fields are required for profile update"}), 400
@@ -290,8 +273,8 @@ def setup_profile():
         updates["yearsOfExperience"] = int(years_of_experience)
         updates["phone"] = phone
         updates["bio"] = bio
-        updates["age"] = int(age)  # New field
-        updates["gender"] = gender  # New field
+        updates["age"] = int(age)
+        updates["gender"] = gender
 
     else:
         return jsonify({"message": "Invalid step"}), 400
@@ -308,19 +291,18 @@ def setup_profile():
             "email": updated_doctor["email"],
             "dob": updated_doctor["dob"].isoformat() if updated_doctor["dob"] else None,
             "gender": updated_doctor["gender"],
-            "age": updated_doctor["age"],  # New field
+            "age": updated_doctor["age"],
             "hospitalName": updated_doctor["hospitalName"],
             "specialization": updated_doctor["specialization"],
             "licenseNumber": updated_doctor["licenseNumber"],
             "yearsOfExperience": updated_doctor["yearsOfExperience"],
             "profilePhoto": updated_doctor["profilePhoto"],
-            "phone": updated_doctor["phone"],  # New field
-            "bio": updated_doctor["bio"]  # New field
+            "phone": updated_doctor["phone"],
+            "bio": updated_doctor["bio"]
         }
     }), 200
 
 @auth_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
-    """Logout"""
     return jsonify({"message": "Logout successful"}), 200

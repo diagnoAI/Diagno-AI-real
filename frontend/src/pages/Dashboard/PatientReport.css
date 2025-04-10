@@ -3,6 +3,9 @@
   background: #f7fafc;
   min-height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .report-title {
@@ -10,6 +13,7 @@
   font-weight: 600;
   color: #1e40af;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .report-card {
@@ -17,77 +21,56 @@
   background: #f7fafc;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.8);
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 .pdf-viewer {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 600px;
   margin-bottom: 1.5rem;
 }
 
-.pdf-navigation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.nav-btn {
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
-  color: #ffffff;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-
-.nav-btn:hover:not(:disabled) {
-  background-color: #1e40af;
-}
-
-.nav-btn:disabled {
-  background-color: #d1d5db;
-  cursor: not-allowed;
-}
-
-.report-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  position: relative;
-  z-index: 10;
-}
-
-.download-btn {
-  padding: 0.75rem 1.5rem;
-  background-color: #2563eb;
-  color: #ffffff;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease;
-  pointer-events: auto;
-}
-
-.download-btn:hover {
-  background-color: #1e40af;
-}
-
 .back-btn {
+  margin-bottom: 1.5rem;
   padding: 0.75rem 1.5rem;
-  background-color: #ef4444;
+  background-color: #2563eb;
   color: #ffffff;
   border-radius: 0.5rem;
   font-size: 0.875rem;
+  display: flex;
+  align-items: center;
   transition: background-color 0.3s ease;
-  pointer-events: auto;
-  cursor: pointer;
+  width: fit-content;
 }
 
 .back-btn:hover {
-  background-color: #dc2626;
+  background-color: #1e40af;
+}
+
+.mobile-back {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem;
+  background-color: #2563eb;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.mobile-back:hover {
+  background-color: #1e40af;
 }
 
 .loading-spinner {
@@ -95,6 +78,9 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  margin-top: 2rem;
+  flex-grow: 1;
+  justify-content: center;
 }
 
 .loading-text {
@@ -107,6 +93,7 @@
   font-size: 1rem;
   color: #ef4444;
   text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 /* Dark Mode */
@@ -123,28 +110,18 @@
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
 }
 
-.report-container.dark .nav-btn {
+.report-container.dark .pdf-viewer {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.report-container.dark .back-btn,
+.report-container.dark .mobile-back {
   background-color: #3b82f6;
 }
 
-.report-container.dark .nav-btn:hover:not(:disabled) {
+.report-container.dark .back-btn:hover,
+.report-container.dark .mobile-back:hover {
   background-color: #2563eb;
-}
-
-.report-container.dark .download-btn {
-  background-color: #3b82f6;
-}
-
-.report-container.dark .download-btn:hover {
-  background-color: #2563eb;
-}
-
-.report-container.dark .back-btn {
-  background-color: #f87171;
-}
-
-.report-container.dark .back-btn:hover {
-  background-color: #ef4444;
 }
 
 .report-container.dark .loading-text {
@@ -157,4 +134,38 @@
 
 .report-container.dark .loading-spinner svg {
   color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .report-container {
+    padding: 1rem;
+  }
+
+  .report-title {
+    font-size: 1.5rem;
+  }
+
+  .report-card {
+    padding: 1rem;
+  }
+
+  .pdf-viewer {
+    height: 400px;
+    max-width: 100%;
+  }
+
+  .back-btn {
+    display: none; /* Hide the default back button on mobile */
+  }
+
+  .mobile-back {
+    display: flex; /* Show the mobile back button with arrow */
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-back {
+    display: none; /* Hide mobile back button on desktop */
+  }
 }

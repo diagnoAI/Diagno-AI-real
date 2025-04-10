@@ -1,29 +1,61 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Download, Trash2, Eye, X } from 'lucide-react';
+import axios from 'axios';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import './ReportRetrieve.css';
 
 export function ReportRetrieve() {
   const [searchQuery, setSearchQuery] = useState('');
   const [patient, setPatient] = useState(null);
+  const [allReports, setAllReports] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  console.log('Current location in ReportRetrieve:', location.pathname);
+  useEffect(() => {
+    const fetchAllReports = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://localhost:5000/patient/report-generated', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setAllReports(response.data.reports);
+      } catch (err) {
+        toast.error('Failed to load patient reports');
+        console.error('Error fetching reports:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllReports();
+  }, []);
 
-  const patients = [
-    { id: '12345', name: 'John Smith', date: '2025-01-12', status: 'Completed' },
-    { id: 'REG6002', name: 'Jane Doe', date: '2025-03-14', status: 'Pending' },
-    { id: 'REG6003', name: 'Mike Johnson', date: '2025-03-13', status: 'Completed' },
-    { id: 'REG6004', name: 'Sarah Williams', date: '2025-03-12', status: 'In Progress' },
-  ];
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = allReports.filter(
+        (report) =>
+          report.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          report.patientId.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSuggestions(filtered.slice(0, 5));
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchQuery, allReports]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setError('');
+    setPatient(null);
+  };
+
+  const handleSuggestionClick = (report) => {
+    setSearchQuery(report.patientName);
+    setPatient(report);
+    setSuggestions([]);
   };
 
   const handleSearch = async (e) => {
@@ -32,70 +64,91 @@ export function ReportRetrieve() {
     setPatient(null);
     setLoading(true);
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const foundPatient = patients.find(
-        (p) =>
-          p.name.toLowerCase() === searchQuery.toLowerCase() ||
-          p.id.toLowerCase() === searchQuery.toLowerCase()
-      );
+    const foundPatient = allReports.find(
+      (p) =>
+        p.patientName.toLowerCase() === searchQuery.toLowerCase() ||
+        p.patientId.toLowerCase() === searchQuery.toLowerCase()
+    );
 
-      if (foundPatient) {
-        setPatient(foundPatient);
-      } else {
-        setError('Invalid patient name or ID');
-      }
-    } catch (err) {
-      setError('Error searching for patient');
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
+    if (foundPatient) {
+      setPatient(foundPatient);
+      toast.success('Patient record found!');
+    } else {
+      setError('No patient found with this name or ID');
+      toast.error('Patient not found');
     }
+    setLoading(false);
+    setSuggestions([]);
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
     setPatient(null);
     setError('');
+    setSuggestions([]);
   };
 
   const handleView = (patientId) => {
-    const absolutePath = `/dashboard/report/${patientId}`;
-    console.log(`Attempting to navigate to absolute path: ${absolutePath}`);
-    navigate(absolutePath);
+    navigate(`/dashboard/report/${patientId}`);
   };
 
   const handleDownload = async (patientId) => {
-    const toastId = toast.loading('Downloading report...'); // Store the toast ID
+    const toastId = toast.loading('Downloading report...');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate download
-      console.log(`Downloading report for patient ID: ${patientId}`);
-      toast.success('Report downloaded successfully!', { id: toastId }); // Update the toast
+      const response = await axios.get(`http://localhost:5000/patient/report/${patientId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      const reportBase64 = response.data.patient.report;
+      if (!reportBase64) throw new Error('Report not found');
+
+      const base64String = reportBase64.split(',')[1];
+      const byteCharacters = atob(base64String);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `report_${patientId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success('Report downloaded successfully!', { id: toastId });
     } catch (error) {
       console.error('Error downloading report:', error);
-      toast.error('Failed to download report', { id: toastId }); // Update the toast on error
+      toast.error('Failed to download report', { id: toastId });
     }
   };
 
   const handleDelete = async (patientId) => {
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this report? This action cannot be undone.'
-    );
+    const confirmDelete = window.confirm('Are you sure you want to delete this patient record? This action cannot be undone.');
     if (!confirmDelete) return;
 
-    const toastId = toast.loading('Deleting report...'); // Store the toast ID
+    const toastId = toast.loading('Deleting patient record...');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await axios.delete(`http://localhost:5000/patient/delete-patient/${patientId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
       setPatient(null);
-      toast.success('Report deleted successfully!', { id: toastId });
+      setAllReports(allReports.filter((report) => report.id !== patientId));
+      toast.success('Patient record deleted successfully!', { id: toastId });
     } catch (error) {
       console.error('Error deleting report:', error);
-      toast.error('Failed to delete report', { id: toastId });
+      toast.error('Failed to delete patient record', { id: toastId });
     }
   };
 
   return (
-    <div className="report-retrieve-container">
+    <motion.div
+      className="report-retrieve-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <h2 className="report-title">Search Patient Records</h2>
       <form className="search-form" onSubmit={handleSearch}>
         <div className="form-group">
@@ -116,23 +169,36 @@ export function ReportRetrieve() {
               {loading ? 'Searching...' : 'Search'}
             </button>
             {searchQuery && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="clear-btn"
-                title="Clear Search"
-              >
+              <button type="button" onClick={handleClearSearch} className="clear-btn" title="Clear Search">
                 <X className="h-5 w-5" />
               </button>
             )}
           </div>
+          {suggestions.length > 0 && (
+            <ul className="suggestions-dropdown">
+              {suggestions.map((report) => (
+                <li
+                  key={report.id}
+                  onClick={() => handleSuggestionClick(report)}
+                  className="suggestion-item"
+                >
+                  {report.patientName} ({report.patientId})
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </form>
 
       {loading && <p className="loading-text">Loading...</p>}
       {!loading && error && <p className="error-text">{error}</p>}
       {!loading && patient && (
-        <div className="patient-details-section">
+        <motion.div
+          className="patient-details-section"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <h3 className="section-title">Patient Details</h3>
           <div className="patient-table neumorphic">
             <div className="table-header">
@@ -143,39 +209,45 @@ export function ReportRetrieve() {
               <span>Actions</span>
             </div>
             <div className="table-row">
-              <span>{patient.name}</span>
-              <span>{patient.id}</span>
-              <span>{patient.date}</span>
-              <span className={`status ${patient.status.toLowerCase()}`}>
-                {patient.status}
+              <span>{patient.patientName}</span>
+              <span>{patient.patientId}</span>
+              <span>{new Date(patient.date).toLocaleDateString()}</span>
+              <span className={`status ${patient.hasStone ? 'completed' : 'pending'}`}>
+                {patient.hasStone ? 'Stone Detected' : 'No Stone'}
               </span>
               <div className="actions">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleView(patient.id)}
                   className="action-btn view"
                   title="View Report"
                 >
                   <Eye className="h-4 w-4" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleDownload(patient.id)}
                   className="action-btn download"
                   title="Download Report"
                 >
                   <Download className="h-4 w-4" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleDelete(patient.id)}
                   className="action-btn delete"
                   title="Delete Report"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
