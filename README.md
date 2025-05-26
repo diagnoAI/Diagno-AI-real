@@ -3,28 +3,44 @@ A smart web application built for doctors to detect and classify kidney stones f
 
 Features
 Doctor-only login and signup (JWT authentication)
+
 Upload kidney CT scan images
+
 AI-based kidney stone detection with:
+
 Highlight stones
+
 Size, shape, and location identification
 
+
 Auto-generated report with:
+
 Patient details
+
 Uploaded vs detected image comparison
+
 Stone Details
+
 Save or Print as PDF (A4 layout)
 
 Search patients by name or register number
+
 For Easily Retrive Old Patients Reports
 
 Dark/light mode toggle
+
 Mobile-responsive and user-friendly UI
 
 Tech Stack
+
 Frontend: React.js (Vite), JavaScript, Tailwind CSS
+
 Backend: Flask (Python), JWT Auth
+
 Database: MongoDB (Atlas)
+
 AI/ML: OpenCV, U-Net segmentation, CNN classification
+
 Tools: Google Colab (Model training), GitHub, Labelme
 
 ### Login Page
@@ -42,13 +58,21 @@ Tools: Google Colab (Model training), GitHub, Labelme
 
 How to Run
 Clone this repository
+
 Setup backend in /backend folder (Python, Flask)
+
 Setup frontend in /frontend folder (React + Vite)
+
 Use MongoDB URI in .env files
+
 Run frontend and backend on separate ports
 
 
+
 About the Team
+
 Final Year B.Sc. IT Students
+
 Project Duration: Jan 2025 – Apr 2025
+
 Built with passion and care for the healthcare domain
