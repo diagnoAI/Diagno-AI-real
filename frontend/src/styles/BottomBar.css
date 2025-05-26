@@ -1,89 +1,144 @@
 .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-around;
-    padding: 0.5rem 0;
-    z-index: 100;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(37, 99, 235, 0.1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.75rem 0;
+  z-index: 100;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.bottom-bar.dark-mode {
+  background: rgba(37, 99, 235, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bottom-bar-item-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-bar-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem;
+  color: #4b5563;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bottom-bar.dark-mode .bottom-bar-item {
+  color: #ffffff;
+}
+
+.bottom-bar-item:hover {
+  color: #2563eb;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+.bottom-bar.dark-mode .bottom-bar-item:hover {
+  color: #60a5fa;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+.bottom-bar-item.active {
+  color: #2563eb;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+.bottom-bar.dark-mode .bottom-bar-item.active {
+  color: #60a5fa;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+.bottom-bar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.bottom-bar-item:hover .bottom-bar-icon {
+  color: #2563eb;
+}
+
+.bottom-bar.dark-mode .bottom-bar-item:hover .bottom-bar-icon {
+  color: #60a5fa;
+}
+
+.bottom-bar-item.active .bottom-bar-icon {
+  color: #2563eb;
+}
+
+.bottom-bar.dark-mode .bottom-bar-item.active .bottom-bar-icon {
+  color: #60a5fa;
+}
+
+/* Tooltip Styles */
+.bottom-bar-tooltip {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 0.75rem;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 101;
+}
+
+.bottom-bar.dark-mode .bottom-bar-tooltip {
+  background: #60a5fa;
+}
+
+/* Hover Support for Desktop */
+@media (min-width: 769px) {
+  .bottom-bar-item-wrapper:hover .bottom-bar-tooltip {
+    display: block;
   }
-  
-  .bottom-bar-item-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .bottom-bar-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
-    color: #4b5563;
-    text-decoration: none;
-  }
-  
-  .bottom-bar-item:hover {
-    color: #2563eb;
-  }
-  
-  .bottom-bar-item.active {
-    color: #2563eb; /* Highlight the active route */
-  }
-  
-  .bottom-bar-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-  
-  /* Tooltip Styles */
+
   .bottom-bar-tooltip {
-    position: absolute;
-    bottom: 100%;
-    margin-bottom: 0.5rem;
-    background: #2563eb;
-    color: #ffffff;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    z-index: 101;
+    display: none;
   }
-  
-  /* Dark Mode */
-  .bottom-bar.dark {
-    background: #1f2937;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
+  .bottom-bar {
+    padding: 0.5rem 0;
   }
-  
-  .bottom-bar.dark .bottom-bar-item {
-    color: #d1d5db;
+
+  .bottom-bar-item {
+    padding: 0.5rem;
   }
-  
-  .bottom-bar.dark .bottom-bar-item:hover {
-    color: #ffffff;
+
+  .bottom-bar-icon {
+    width: 1.25rem;
+    height: 1.25rem;
   }
-  
-  .bottom-bar.dark .bottom-bar-item.active {
-    color: #ffffff; /* Highlight the active route in dark mode */
+
+  .bottom-bar-tooltip {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
   }
-  
-  .bottom-bar.dark .bottom-bar-tooltip {
-    background: #1f2937;
-    color: #ffffff;
-    border: 1px solid #d1d5db;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-bar-item {
+    transition: none;
   }
-  
-  /* Hover Support for Desktop */
-  @media (min-width: 769px) {
-    .bottom-bar-item-wrapper:hover .bottom-bar-tooltip {
-      display: block;
-    }
-  
-    .bottom-bar-tooltip {
-      display: none;
-    }
-  }
+}

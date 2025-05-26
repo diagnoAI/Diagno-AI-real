@@ -1,1 +1,8 @@
-.landing-page {   background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff); }
+.landing-page {
+    background: #ffffff; /* Solid white for light mode */
+  }
+  
+  /* Dark Mode Background */
+  .landing-page.dark-mode {
+    background: linear-gradient(to bottom right, #0a0a1a, #1e0a3c);
+  }

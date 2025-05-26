@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './Login.css';
 
@@ -11,7 +11,8 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const { login, user, isDarkMode } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export function Login() {
     try {
       await login({ email, password });
       toast.success('Login successful!');
-      navigate('/'); // Redirect to dashboard or home page
+      navigate('/');
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
       setErrors({ email: 'Invalid email or password' });
@@ -49,51 +50,87 @@ export function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div className={`login-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="glass login-container"
       >
         <h2 className="login-title">Sign in to Diagno AI</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              placeholder='Enter your email'
-              onChange={(e) => setEmail(e.target.value)}
-              className={`form-input ${errors.email ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
-              disabled={isLoading}
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
+            <div className="input-wrapper">
+              {email === '' && <Mail className="input-icon" />}
+              <input
+                id="email"
+                type="email"
+                value={email}
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+                className={`form-input ${errors.email ? 'border-red-500' : ''} ${
+                  email === '' ? 'with-icon' : 'without-icon'
+                }`}
+                disabled={isLoading}
+              />
+            </div>
+            {errors.email && <p className="error-text">{errors.email}</p>}
           </div>
           <div className="form-group">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className={`form-input ${errors.password ? 'border-red-500' : 'focus:border-blue-500 focus:ring-blue-500'}`}
-              disabled={isLoading}
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <div className="input-wrapper">
+              {password === '' && <Lock className="input-icon" />}
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                placeholder="Enter your password"
+                onChange={(e) => setPassword(e.target.value)}
+                className={`form-input ${errors.password ? 'border-red-500' : ''} ${
+                  password === '' ? 'with-icon' : 'without-icon'
+                }`}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                className="eye-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+              >
+                {showPassword ? <EyeOff className="eye-icon" /> : <Eye className="eye-icon" />}
+              </button>
+            </div>
+            {errors.password && <p className="error-text">{errors.password}</p>}
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
-            className="form-submit focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:bg-blue-700"
+            className="form-submit"
             disabled={isLoading}
           >
             {isLoading ? <span className="spinner"></span> : 'Login'}
-          </button>
+          </motion.button>
         </form>
-        <p className="login-signup">
-          Don’t have an account? <Link to="/signup" className="signup-link">Sign Up</Link>
-        </p>
+        <div className="login-links">
+          <p className="login-signup">
+            Don’t have an account?{' '}
+            <Link to="/signup" className="signup-link">
+              Sign Up
+            </Link>
+          </p>
+          <p className="forgot-password">
+            Forgot your password?{' '}
+            <Link to="/forgot-password" className="signup-link">
+              Reset Password
+            </Link>
+          </p>
+        </div>
       </motion.div>
     </div>
   );

@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Stethoscope, User, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Lottie from 'lottie-react';
+import kidneyAnimation from '../assets/Animation - 1744577087398.json'; // Adjust path as needed
 import { clsx } from 'clsx';
 import '../styles/Navbar.css';
 
 export function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isDarkMode } = useAuth();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,16 +28,20 @@ export function Navbar() {
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="navbar-container">
         <div className="navbar-content">
           {/* Logo on Left */}
-          <Link to="/" className="navbar-logo" onClick={()=>{closeDropdown(); closeMobileMenu();}}>
-            <Stethoscope className="navbar-logo-icon" />
+          <Link to="/" className="navbar-logo" onClick={() => { closeDropdown(); closeMobileMenu(); }}>
+            <Lottie
+              animationData={kidneyAnimation}
+              loop={true}
+              className="navbar-logo-icon"
+            />
             <span className="navbar-logo-text">Diagno AI</span>
           </Link>
 
-          {/* Desktop Nav Links */}
+          {/* Centered Desktop Nav Links */}
           <div className="navbar-links md:flex hidden">
             {navLinks.map((link) => (
               <Link
@@ -70,8 +76,7 @@ export function Navbar() {
                   >
                     {user?.profilePhoto ? (
                       <img
-                        src={user.profilePhoto
-                        }
+                        src={user.profilePhoto}
                         alt={user.fullname}
                         className="navbar-user-image"
                       />
@@ -86,7 +91,7 @@ export function Navbar() {
                   >
                     <Link
                       to="/dashboard"
-                      className="navbar-dropdown-item hover:bg-gray-100"
+                      className="navbar-dropdown-item"
                       onClick={closeDropdown}
                     >
                       Dashboard
@@ -96,7 +101,7 @@ export function Navbar() {
                         logout();
                         closeDropdown();
                       }}
-                      className="navbar-dropdown-button hover:bg-gray-100"
+                      className="navbar-dropdown-button"
                     >
                       Logout
                     </button>
@@ -105,7 +110,7 @@ export function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className="navbar-login hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="navbar-login"
                   onClick={closeMobileMenu}
                 >
                   Login

@@ -2,23 +2,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Lock, Eye, EyeOff, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Settings.css';
 
-
-// Redirect if no user
- 
-
 export function Settings() {
-  const { user, isDarkMode, toggleDarkMode } = useAuth();
-
+  const { user, isDarkMode, toggleDarkMode, updatePassword } = useAuth();
   const [notifications, setNotifications] = useState({
     email: true,
     desktop: true,
     updates: false,
   });
-
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -26,6 +19,7 @@ export function Settings() {
     newPassword: '',
     confirmPassword: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNotificationChange = (key) => {
     setNotifications((prev) => ({
@@ -35,22 +29,58 @@ export function Settings() {
     toast.success('Notification settings updated');
   };
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    console.log('Submitting password update:', passwordForm);
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error('New passwords do not match');
+      toast.error('New password and confirm password do not match');
+      setIsSubmitting(false);
       return;
     }
     if (passwordForm.newPassword.length < 6) {
-      toast.error('New password must be at least 6 characters');
+      toast.error('New password must be at least 6 characters long');
+      setIsSubmitting(false);
       return;
     }
-    toast.success('Password updated successfully');
-    setPasswordForm({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
+    if (passwordForm.currentPassword === passwordForm.newPassword) {
+      toast.error('New password must be different from current password');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!passwordForm.currentPassword) {
+      toast.error('Current password is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!passwordForm.newPassword) {
+      toast.error('New password is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!passwordForm.confirmPassword) {
+      toast.error('Confirm password is required');
+      setIsSubmitting(false);
+      return;
+    }
+    try {
+      await updatePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      console.log('Password updated successfully');
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    } catch (error) {
+      console.error('Password update failed:', error.message);
+      toast.error(error.message || 'Failed to update password');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -125,11 +155,13 @@ export function Settings() {
                       setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
                     }
                     className="form-input"
+                    disabled={isSubmitting}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                     className="password-toggle"
+                    disabled={isSubmitting}
                   >
                     {showCurrentPassword ? (
                       <EyeOff className="toggle-icon" />
@@ -149,11 +181,13 @@ export function Settings() {
                       setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                     }
                     className="form-input"
+                    disabled={isSubmitting}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                     className="password-toggle"
+                    disabled={isSubmitting}
                   >
                     {showNewPassword ? (
                       <EyeOff className="toggle-icon" />
@@ -172,11 +206,12 @@ export function Settings() {
                     setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                   }
                   className="form-input"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="form-actions">
-                <button type="submit" className="submit-button">
-                  Update Password
+                <button type="submit" className="submit-button" disabled={isSubmitting}>
+                  {isSubmitting ? 'Updating...' : 'Update Password'}
                 </button>
               </div>
             </form>

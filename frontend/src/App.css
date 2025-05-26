@@ -1,4 +1,15 @@
 .app-container {
   min-height: 100vh;
-  background: #f9fafb; 
+  background: #f9fafb;
+}
+
+/* Dark Mode Background */
+.app-container.dark-mode {
+  background: linear-gradient(
+    45deg,
+    #0a0a1a 20%, /* Deep black */
+    #1e0a3c 40%, /* Dark purple */
+    #2a1a5e 60%, /* Purple-blue */
+    #0a0a1a 80%  /* Back to black */
+  );
 }

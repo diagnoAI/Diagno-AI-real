@@ -1,113 +1,213 @@
 .workflow {
-    padding: 6rem 0;
-    background: #ffffff;
-  }
-  
-  .workflow-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  
-  .workflow-header {
-    text-align: center;
-  }
-  
+  padding: 6rem 0;
+  background: none;
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* Background Animation */
+.workflow-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, #ffffff, #eff6ff);
+  z-index: 0;
+}
+
+/* Dark Mode Background */
+.workflow.dark-mode {
+  background: none;
+}
+
+.workflow.dark-mode .workflow-background {
+  background: linear-gradient(to bottom, #0a0a1a, #1e0a3c);
+}
+
+.workflow-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.workflow-header {
+  text-align: center;
+}
+
+.workflow-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 1rem;
+  display: inline-flex; /* For letter animation */
+}
+
+/* Dark Mode Title */
+.workflow.dark-mode .workflow-title {
+  color: #ffffff;
+}
+
+.workflow-subtitle {
+  font-size: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 4rem;
+}
+
+/* Dark Mode Subtitle */
+.workflow.dark-mode .workflow-subtitle {
+  color: #d1d5db;
+}
+
+.workflow-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.workflow-step {
+  position: relative;
+}
+
+.workflow-card {
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Mode Card */
+.workflow.dark-mode .workflow-card {
+  background: rgba(30, 30, 46, 0.8);
+}
+
+/* Hover Effect */
+.workflow-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Hover Glow */
+.workflow.dark-mode .workflow-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.6);
+}
+
+.workflow-icon-container {
+  height: 4rem;
+  width: 4rem;
+  border-radius: 9999px;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+/* Dark Mode Icon Container */
+.workflow.dark-mode .workflow-icon-container {
+  background: #1e40af;
+}
+
+.workflow-icon {
+  height: 2rem;
+  width: 2rem;
+  color: #2563eb;
+}
+
+/* Dark Mode Icon */
+.workflow.dark-mode .workflow-icon {
+  color: #60a5fa;
+}
+
+.workflow-step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Dark Mode Step Title */
+.workflow.dark-mode .workflow-step-title {
+  color: #ffffff;
+}
+
+.workflow-step-description {
+  color: #4b5563;
+}
+
+/* Dark Mode Description */
+.workflow.dark-mode .workflow-step-description {
+  color: #d1d5db;
+}
+
+.workflow-connector {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: -2rem; /* Adjusted to center between cards */
+  transform: translateY(-50%);
+  width: 4rem;
+  height: 2px;
+  background: #bfdbfe;
+  z-index: 9; /* Below cards but above background */
+}
+
+/* Dark Mode Connector */
+.workflow.dark-mode .workflow-connector {
+  background: #60a5fa;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Glow Animation for Connector */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(96, 165, 250, 0.5); }
+  50% { box-shadow: 0 0 15px rgba(96, 165, 250, 0.8); }
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
   .workflow-title {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 1rem;
+    font-size: 2.25rem;
   }
-  
-  .workflow-subtitle {
-    font-size: 1.25rem;
-    color: #4b5563;
-    margin-bottom: 4rem;
+
+  .workflow-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-  
+}
+
+@media (min-width: 768px) {
   .workflow-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  .workflow-step {
-    position: relative;
+
+  .md\:block {
+    display: block;
   }
-  
-  .workflow-card {
-    border-radius: 0.75rem;
-    padding: 2rem;
-    text-align: center;
-    position: relative;
-    z-index: 10;
+}
+
+@media (min-width: 1024px) {
+  .workflow-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
-  
-  .workflow-icon-container {
-    height: 4rem;
-    width: 4rem;
-    border-radius: 9999px;
-    background: #dbeafe;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
+}
+
+/* Accessibility: Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .workflow-card,
+  .workflow-connector,
+  .workflow-background,
+  .workflow-title span {
+    transition: none;
+    animation: none;
   }
-  
-  .workflow-icon {
-    height: 2rem;
-    width: 2rem;
-    color: #2563eb;
-  }
-  
-  .workflow-step-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 1rem;
-  }
-  
-  .workflow-step-description {
-    color: #4b5563;
-  }
-  
-  .workflow-connector {
-    display: none;
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateX(50%) translateY(-50%);
-    width: 4rem;
-    height: 2px;
-    background: #bfdbfe;
-  }
-  
-  /* Responsive adjustments */
-  @media (min-width: 640px) {
-    .workflow-title {
-      font-size: 2.25rem;
-    }
-  
-    .workflow-container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 768px) {
-    .workflow-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  
-    .md\:block {
-      display: block;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .workflow-container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
+}

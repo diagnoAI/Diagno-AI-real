@@ -37,7 +37,7 @@ const Slider = ({ images }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 5000); // Change slide every 3 seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, [images.length]);
 
@@ -55,7 +55,7 @@ const Slider = ({ images }) => {
 };
 
 export function DashboardHome() {
-  const { user, isDarkMode, fetchStats } = useAuth();
+  const { user, isDarkMode, fetchStats, loading } = useAuth();
   const [stats, setStats] = useState({
     totalPatients: 0,
     scansToday: 0,
@@ -82,10 +82,12 @@ export function DashboardHome() {
         setTrendData(data.trendData);
       }
     };
-    loadStats();
-  }, [fetchStats]);
+    if (!loading && user) {
+      loadStats();
+    }
+  }, [fetchStats, loading, user]);
 
-  // Real-time updates with debouncing handled in fetchStats
+  // Real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchStats().then((data) => {
@@ -102,7 +104,7 @@ export function DashboardHome() {
           setTrendData(data.trendData);
         }
       });
-    }, 5000); // Update every 5 seconds, debounced to 2 seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, [fetchStats]);
 
@@ -172,13 +174,32 @@ export function DashboardHome() {
     },
   };
 
-  // Slider images (all empty for custom addition)
+  // Slider images
   const sliderImages = [
-    'src/assets/1344450.jpeg',
-    'src/assets/doctor.jpg',
-    'src/assets/Stone- (26).jpg',
-    'src/assets/upload.jpg',
+    'src/assets/Upload.jpg',
+    'src/assets/Analyze.jpg',
+    'src/assets/display.jpg',
+    'src/assets/report.jpg'
   ];
+
+  if (loading) {
+    return (
+      <div className={`dashboard-home-container ${isDarkMode ? 'dark' : ''}`}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="loading-container"
+        >
+          <p>Loading...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Let AuthContext handle redirect
+  }
 
   return (
     <div className={`dashboard-home-container ${isDarkMode ? 'dark' : ''}`}>
@@ -190,7 +211,7 @@ export function DashboardHome() {
       >
         <div className="flex items-center gap-3">
           <Stethoscope className="h-8 w-8 text-blue-600" />
-          <h1 className="dashboard-home-title">Welcome, Dr. {user?.fullName || 'Doctor'}</h1>
+          <h1 className="dashboard-home-title">Welcome, Dr. {user.fullName}</h1>
         </div>
         <p className="dashboard-home-subtitle">Real-time kidney stone detection insights at your fingertips.</p>
       </motion.div>

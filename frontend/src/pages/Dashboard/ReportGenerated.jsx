@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, Eye, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import './ReportGenerated.css';
 
 export function ReportGenerated() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { isDarkMode } = useAuth();
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [viewingReport, setViewingReport] = useState(false);
@@ -61,7 +63,7 @@ export function ReportGenerated() {
 
   if (loading) {
     return (
-      <div className="report-generated-container glass">
+      <div className={`report-generated-container glass ${isDarkMode ? 'dark-mode' : ''}`}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="report-title">
           Loading Report...
         </motion.h2>
@@ -71,7 +73,7 @@ export function ReportGenerated() {
 
   if (!reportData) {
     return (
-      <div className="report-generated-container glass">
+      <div className={`report-generated-container glass ${isDarkMode ? 'dark-mode' : ''}`}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="report-title">
           Report Not Found
         </motion.h2>
@@ -82,21 +84,8 @@ export function ReportGenerated() {
     );
   }
 
-  if (viewingReport) {
-    return (
-      <div className="report-viewer-full glass">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="report-full-container">
-          <button onClick={handleBack} className="back-btn">
-            <ArrowLeft className="w-5 h-5 mr-2" /> Back
-          </button>
-          <iframe src={reportData.report} title="Report PDF" className="report-iframe" />
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
-    <div className="report-generated-container glass">
+    <div className={`report-generated-container glass ${isDarkMode ? 'dark-mode' : ''}`}>
       <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="report-title">
         Report Generated
       </motion.h2>
@@ -132,6 +121,32 @@ export function ReportGenerated() {
           <Download className="w-5 h-5 mr-2" /> Download the report
         </motion.button>
       </div>
+      <AnimatePresence>
+        {viewingReport && (
+          <motion.div
+            className={`report-viewer-full glass ${isDarkMode ? 'dark-mode' : ''}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="report-full-container">
+              <button onClick={handleBack} className="back-btn">
+                <ArrowLeft className="w-5 h-5 mr-2" /> Back
+              </button>
+              <motion.iframe
+                src={reportData.report}
+                title="Report PDF"
+                className="report-iframe"
+                initial={{ scale: 0.5, opacity: 0.8, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.5, opacity: 0.8, y: 20 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

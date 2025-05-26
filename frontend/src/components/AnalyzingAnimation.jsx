@@ -1,10 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import '../styles/AnalyzingAnimation.css';
 
 export function AnalyzingAnimation() {
+  const { isDarkMode } = useAuth();
+
   return (
-    <div className="analyzing-animation">
+    <div className={`analyzing-animation ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Animation Container for Loader Elements */}
       <div className="animation-container">
         {/* Outer Rotating Circle */}

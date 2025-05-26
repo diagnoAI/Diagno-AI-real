@@ -16,6 +16,11 @@
   z-index: 50;
 }
 
+.sidebar.dark-mode {
+  background: rgba(37, 99, 235, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .sidebar.collapsed {
   width: 4rem;
   padding: 1rem 0;
@@ -30,15 +35,15 @@
 }
 
 .sidebar.collapsed .sidebar-header {
-  flex-direction: column; /* Stack buttons vertically in collapsed state */
-  gap: 1rem; /* Add space between back button and hamburger button */
-  align-items: center; /* Center both buttons */
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
 
 .sidebar-header-left {
   display: flex;
   align-items: center;
-  gap: 1rem; /* Space between back button and h4 */
+  gap: 1rem;
 }
 
 .sidebar-back-button {
@@ -46,7 +51,16 @@
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+.sidebar.dark-mode .sidebar-back-button:hover {
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
 }
 
 .sidebar-back-icon {
@@ -55,18 +69,35 @@
   color: #2563eb;
 }
 
+.sidebar.dark-mode .sidebar-back-icon {
+  color: #60a5fa;
+}
+
 .sidebar-toggle-button {
   background: none;
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+.sidebar.dark-mode .sidebar-toggle-button:hover {
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
 }
 
 .sidebar-toggle-icon {
   width: 1.5rem;
   height: 1.5rem;
   color: #2563eb;
+}
+
+.sidebar.dark-mode .sidebar-toggle-icon {
+  color: #60a5fa;
 }
 
 .sidebar-profile {
@@ -80,6 +111,11 @@
   object-fit: cover;
   margin: 0 auto;
   transition: width 0.3s ease, height 0.3s ease;
+  border: 2px solid #2563eb;
+}
+
+.sidebar.dark-mode .sidebar-profile-image {
+  border: 2px solid #60a5fa;
 }
 
 .sidebar.collapsed .sidebar-profile-image {
@@ -94,12 +130,12 @@
   margin-top: 1rem;
 }
 
-.sidebar.collapsed .sidebar-profile-name {
-  display: none;
+.sidebar.dark-mode .sidebar-profile-name {
+  color: #ffffff;
 }
 
-.dashboard-page.dark .sidebar-profile-name {
-  color: #ffffff;
+.sidebar.collapsed .sidebar-profile-name {
+  display: none;
 }
 
 .sidebar-links {
@@ -117,7 +153,11 @@
   font-size: 1rem;
   color: #4b5563;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar.dark-mode .sidebar-link {
+  color: #ffffff;
 }
 
 .sidebar.collapsed .sidebar-link {
@@ -128,20 +168,49 @@
 .sidebar-link:hover {
   background: rgba(255, 255, 255, 0.2);
   color: #2563eb;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
 }
 
-.dashboard-page.dark .sidebar-link {
-  color: #d1d5db;
-}
-
-.dashboard-page.dark .sidebar-link:hover {
+.sidebar.dark-mode .sidebar-link:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: #60a5fa;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+.sidebar-link.active {
+  background: rgba(255, 255, 255, 0.3);
+  color: #2563eb;
+}
+
+.sidebar.dark-mode .sidebar-link.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #60a5fa;
 }
 
 .sidebar-icon {
   width: 1.25rem;
   height: 1.25rem;
+  color: #4b5563;
+}
+
+.sidebar.dark-mode .sidebar-icon {
+  color: #ffffff;
+}
+
+.sidebar-link:hover .sidebar-icon {
+  color: #2563eb;
+}
+
+.sidebar.dark-mode .sidebar-link:hover .sidebar-icon {
+  color: #60a5fa;
+}
+
+.sidebar-link.active .sidebar-icon {
+  color: #2563eb;
+}
+
+.sidebar.dark-mode .sidebar-link.active .sidebar-icon {
+  color: #60a5fa;
 }
 
 .sidebar-logout {
@@ -171,6 +240,10 @@
   display: none;
 }
 
+.sidebar.dark-mode .tooltip {
+  background: #60a5fa;
+}
+
 .sidebar.collapsed .sidebar-link:hover .tooltip {
   display: block;
 }
@@ -179,15 +252,19 @@
   font-size: 1rem;
   font-weight: 600;
   color: #111827;
-  margin: 0; /* Remove default margin for better alignment */
+  margin: 0;
 }
 
-.dashboard-page.dark .h4 {
+.sidebar.dark-mode .h4 {
   color: #ffffff;
 }
 
-/* Dark Mode Adjustments */
-.dashboard-page.dark .sidebar {
-  background: rgba(37, 99, 235, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar-link,
+  .sidebar-back-button,
+  .sidebar-toggle-button {
+    transition: none;
+  }
 }

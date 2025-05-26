@@ -1,3 +1,4 @@
 .features-page {
     padding-top: 4rem; /* Matches Tailwind's pt-16 (16 * 0.25rem = 4rem) */
+    /* height: 100vh; */
   }

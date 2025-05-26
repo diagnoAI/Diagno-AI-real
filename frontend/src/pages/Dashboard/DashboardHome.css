@@ -118,7 +118,7 @@
 
 .slide {
   min-width: 100%;
-  height: 566px; /* Match your image height */
+  height: 566px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -186,20 +186,25 @@
 .charts-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .risk-distribution-card, .graph-card {
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
   background: #ffffff;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 }
 
 .chart-container {
-  height: 300px;
   width: 100%;
+  max-width: 100%;
+  height: 40vw;
+  max-height: 200px;
 }
 
 /* Dark Mode */
@@ -304,10 +309,6 @@
   .patient-item p {
     font-size: 0.75rem;
   }
-
-  .chart-container {
-    height: 200px;
-  }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -318,10 +319,27 @@
   .charts-section {
     grid-template-columns: 1fr;
   }
+
+  .chart-container {
+    height: 300px;
+  }
 }
 
 @media (min-width: 1025px) {
   .charts-section {
     grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .stats-card,
+  .slide,
+  .slider-wrapper {
+    transition: none;
   }
 }

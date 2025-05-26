@@ -3,6 +3,10 @@ import numpy as np
 import cv2
 import base64
 from io import BytesIO
+import os
+import warnings
+warnings.filterwarnings(action="ignore")
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 # Define custom metrics/losses (unchanged)
 def dice_coefficient(y_true, y_pred, smooth=1):
@@ -22,7 +26,7 @@ def iou(y_true, y_pred, smooth=1):
     return (intersection + smooth) / (union + smooth)
 
 # Lazy-load the model
-model = tf.keras.models.load_model('D://Diagno genix AI sample Testing/Diagno/pred2/unet_aug.keras', 
+model = tf.keras.models.load_model('D:\\lastcheck 2\\Diagno AI real\\backend\\ai_models\\unet_aug.keras', 
                                    custom_objects={'dice_loss': dice_loss, 
                                                    'dice_coefficient': dice_coefficient, 
                                                    'iou': iou})

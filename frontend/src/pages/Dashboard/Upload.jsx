@@ -18,7 +18,7 @@ export function Upload() {
   const [ctScanUrl, setCtScanUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const { upload } = useAuth();
+  const { upload, isDarkMode } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function Upload() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="upload-container glass"
+      className={`upload-container glass ${isDarkMode ? 'dark-mode' : ''}`}
     >
       <motion.h2
         initial={{ scale: 0.9 }}
@@ -96,60 +96,73 @@ export function Upload() {
         Upload Patient Details
       </motion.h2>
       <form className="upload-form" onSubmit={handleSubmit}>
-        <div className="form-grid">
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="form-group">
-            <label htmlFor="patientName" className="form-label">Patient Name</label>
-            <input id="patientName" type="text" value={patientName} onChange={(e) => setPatientName(e.target.value)} className="form-input" />
-          </motion.div>
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="form-group">
-            <label htmlFor="patientId" className="form-label">Patient ID</label>
-            <input id="patientId" type="text" value={patientId} onChange={(e) => setPatientId(e.target.value)} className="form-input" />
-          </motion.div>
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="form-group">
-            <label htmlFor="age" className="form-label">Age</label>
-            <input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} className="form-input" />
-          </motion.div>
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="form-group">
-            <label htmlFor="gender" className="form-label">Gender</label>
-            <select id="gender" value={gender} onChange={(e) => setGender(e.target.value)} className="form-input">
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </motion.div>
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="form-group">
-            <label htmlFor="date" className="form-label">Date</label>
-            <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="form-input" disabled />
-          </motion.div>
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="form-group dropzone-group">
-            <label className="form-label">CT Scan</label>
-            <div {...getRootProps()} className="dropzone">
-              <input {...getInputProps()} />
-              {ctScanUrl ? (
-                <div className="dropzone-image-container">
-                  <img src={ctScanUrl} alt="Uploaded CT Scan" className="dropzone-image" />
-                  <button className="remove-image-button" onClick={(e) => { e.stopPropagation(); setCtScan(null); }}>×</button>
-                </div>
+        <div className="form-sections">
+          <div className="patient-details">
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="form-group">
+              <label htmlFor="patientName" className="form-label">Patient Name</label>
+              <input id="patientName" type="text" value={patientName} onChange={(e) => setPatientName(e.target.value)} className="form-input" />
+            </motion.div>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="form-group">
+              <label htmlFor="patientId" className="form-label">Patient ID</label>
+              <input id="patientId" type="text" value={patientId} onChange={(e) => setPatientId(e.target.value)} className="form-input" />
+            </motion.div>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="form-group">
+              <label htmlFor="age" className="form-label">Age</label>
+              <input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} className="form-input" />
+            </motion.div>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="form-group">
+              <label htmlFor="gender" className="form-label">Gender</label>
+              <select id="gender" value={gender} onChange={(e) => setGender(e.target.value)} className="form-input">
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </motion.div>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="form-group">
+              <label htmlFor="date" className="form-label">Date</label>
+              <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="form-input" disabled />
+            </motion.div>
+          </div>
+          <div className="ct-scan-section">
+            <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="form-group dropzone-group">
+              <label className="form-label">CT Scan</label>
+              <div {...getRootProps()} className="dropzone">
+                <input {...getInputProps()} />
+                {ctScanUrl ? (
+                  <div className="dropzone-image-container">
+                    <img src={ctScanUrl} alt="Uploaded CT Scan" className="dropzone-image" />
+                    <button className="remove-image-button" onClick={(e) => { e.stopPropagation(); setCtScan(null); }}>×</button>
+                  </div>
+                ) : (
+                  <div className="dropzone-content">
+                    <UploadIcon className="dropzone-icon" />
+                    <label className="dropzone-label">{isDragActive ? 'Drop here' : 'Upload CT Scan'}</label>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="form-submit"
+              disabled={isLoading}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="spinner" />
+                  Uploading...
+                </>
               ) : (
-                <div className="dropzone-content">
-                  <UploadIcon className="dropzone-icon" />
-                  <label className="dropzone-label">{isDragActive ? 'Drop here' : 'Upload CT Scan'}</label>
-                </div>
+                'Upload'
               )}
-            </div>
-          </motion.div>
+            </motion.button>
+          </div>
         </div>
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} type="submit" className="form-submit" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="spinner" />
-              Uploading...
-            </>
-          ) : (
-            'Upload'
-          )}
-        </motion.button>
       </form>
     </motion.div>
   );

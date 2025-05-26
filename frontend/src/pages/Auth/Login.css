@@ -1,124 +1,241 @@
 .login-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
-    /* backdrop-filter: blur(20px); */
-    padding: 3rem 1rem;
-  }
-  
-  .login-container {
-    max-width: 28rem; /* Matches Tailwind's max-w-md */
-    width: 100%;
-    border-radius: 0.75rem;
-    padding: 2rem;
-  }
-  
-  .login-logo {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-  }
-  
-  .login-icon {
-    height: 3rem;
-    width: 3rem;
-    color: #2563eb;
-  }
-  
-  .login-title {
-    text-align: center;
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 2rem;
-  }
-  
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  /* .form-group { */
-    /* No additional styles needed here */
-  /* } */
-  
-  .form-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-  }
-  
-  .form-input {
-    margin-top: 0.25rem;
-    display: block;
-    width: 100%;
-    border-radius: 0.375rem;
-    border: 1px solid #d1d5db;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    padding: 0.5rem 0.75rem;
-  }
-  
-  .form-submit {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.375rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #ffffff;
-    background: #2563eb;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .login-signup-text {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 0.875rem;
-    color: #4b5563;
-  }
-  
-  .login-signup-link {
-    font-weight: 500;
-    color: #2563eb;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-  .spinner {
-    width: 1rem;
-    height: 1rem;
-    animation: spin 1s linear infinite;
-  }
-  
-  /* Responsive adjustments */
-  @media (min-width: 640px) {
-    .login-page {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .login-page {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #eff6ff, #ffffff, #ecfeff);
+  padding: 3rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
 
-  /* ... Existing styles ... */
+/* Dark Mode Background */
+.login-page.dark-mode {
+  background: linear-gradient(to bottom right, #0a0a1a, #1e0a3c);
+}
 
-.login-signup {
+.login-container {
+  max-width: 28rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Dark Mode Container */
+.login-page.dark-mode .login-container {
+  background: rgba(10, 10, 26, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2rem;
+}
+
+/* Dark Mode Title */
+.login-page.dark-mode .login-title {
+  color: #ffffff;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark Mode Label */
+.login-page.dark-mode .form-label {
+  color: #d1d5db;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, padding-left 0.2s ease;
+}
+
+/* Input with Icon */
+.form-input.with-icon {
+  padding-left: 2.5rem;
+}
+
+/* Input without Icon */
+.form-input.without-icon {
+  padding-left: 0.75rem;
+}
+
+/* Dark Mode Input */
+.login-page.dark-mode .form-input {
+  border-color: #4b5563;
+  background: #1e1e2e;
+  color: #d1d5db;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Dark Mode Input Focus */
+.login-page.dark-mode .form-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Dark Mode Placeholder */
+.login-page.dark-mode .form-input::placeholder {
+  color: #6b7280;
+}
+
+.form-input.border-red-500 {
+  border-color: #ef4444;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #6b7280;
+  z-index: 10;
+}
+
+/* Dark Mode Input Icon */
+.login-page.dark-mode .input-icon {
+  color: #9ca3af;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.eye-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #6b7280;
+}
+
+/* Dark Mode Eye Icon */
+.login-page.dark-mode .eye-icon {
+  color: #9ca3af;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.form-submit {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(to right, #2563eb, #06b6d4);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Dark Mode Submit Button */
+.login-page.dark-mode .form-submit {
+  background: linear-gradient(to right, #60a5fa, #00e6ff);
+}
+
+.form-submit:hover {
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Dark Mode Submit Hover */
+.login-page.dark-mode .form-submit:hover {
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+
+.form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.login-signup,
+.forgot-password {
   text-align: center;
   font-size: 0.875rem;
   color: #4b5563;
-  margin-top: 1rem;
+}
+
+/* Dark Mode Signup/Forgot Password Text */
+.login-page.dark-mode .login-signup,
+.login-page.dark-mode .forgot-password {
+  color: #d1d5db;
 }
 
 .signup-link {
@@ -127,6 +244,34 @@
   font-weight: 500;
 }
 
+/* Dark Mode Signup Link */
+.login-page.dark-mode .signup-link {
+  color: #60a5fa;
+}
+
 .signup-link:hover {
   text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
+  .login-page {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-page {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .form-submit,
+  .login-container {
+    transition: none;
+  }
 }

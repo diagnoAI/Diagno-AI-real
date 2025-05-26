@@ -6,19 +6,32 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Profile.css';
-import axios from 'axios';
 
 export function Profile() {
-  const { user, logout, setupProfile } = useAuth();
+  const { user, logout, setupProfile, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Wait for loading to complete
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="profile-container"
+      >
+        <p>Loading...</p>
+      </motion.div>
+    );
+  }
 
   // Redirect if no user
   useEffect(() => {
-    if (!user) {
+    if (!user && !loading) {
       console.log('No user data - redirecting to login');
-      navigate('/');
+      navigate('/login');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   if (!user) {
     return null;
@@ -29,33 +42,57 @@ export function Profile() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
-    Specialization: user?.specialization || '',
+    specialization: user?.specialization || '',
     hospitalName: user?.hospitalName || '',
     yearsOfExperience: user?.yearsOfExperience || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    profilePhoto: user?.profilePhoto || null,
+    profilePhoto: null,
     bio: user?.bio || '',
-    age: user?.age || 0,  // New field
-    gender: user?.gender || '',  // New field
+    age: user?.age || 0,
+    gender: user?.gender || '',
   });
   const [profileImagePreview, setProfileImagePreview] = useState(user?.profilePhoto || '/default-profile.png');
 
   useEffect(() => {
-    if (formData.profilePhoto && typeof formData.profilePhoto !== 'string') {
+    if (formData.profilePhoto instanceof File) {
+      console.log('Profile photo updated:', {
+        name: formData.profilePhoto.name,
+        size: formData.profilePhoto.size,
+        type: formData.profilePhoto.type,
+      });
       const url = URL.createObjectURL(formData.profilePhoto);
       setProfileImagePreview(url);
       return () => URL.revokeObjectURL(url);
     } else {
-      setProfileImagePreview(formData.profilePhoto || '/default-profile.png');
+      console.log('Resetting preview to user profile photo or default');
+      setProfileImagePreview(user?.profilePhoto || '/default-profile.png');
     }
-  }, [formData.profilePhoto]);
+  }, [formData.profilePhoto, user?.profilePhoto]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: { 'image/*': [] },
+    accept: { 'image/*': ['.jpg', '.jpeg', '.png'] }, // Restrict to common image types
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
-      setFormData((prev) => ({ ...prev, profilePhoto: acceptedFiles[0] }));
+    maxSize: 5 * 1024 * 1024, // 5MB limit
+    onDrop: (acceptedFiles, fileRejections) => {
+      if (fileRejections.length > 0) {
+        fileRejections.forEach((rejection) => {
+          rejection.errors.forEach((error) => {
+            console.error('Drop rejected:', error.message);
+            toast.error(`File error: ${error.message}`);
+          });
+        });
+        return;
+      }
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        console.log('File accepted:', {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+        setFormData((prev) => ({ ...prev, profilePhoto: file }));
+      }
     },
   });
 
@@ -67,17 +104,18 @@ export function Profile() {
         step: "update",
         fullName: formData.fullName,
         hospitalName: formData.hospitalName,
-        specialization: formData.Specialization,
+        specialization: formData.specialization,
         yearsOfExperience: formData.yearsOfExperience,
         phone: formData.phone,
         bio: formData.bio,
-        age: formData.age,  // New field
-        gender: formData.gender,  // New field
+        age: formData.age,
+        gender: formData.gender,
       };
       await setupProfile("update", updates);
       toast.success('Profile updated successfully');
       setIsEditingProfile(false);
     } catch (error) {
+      console.error('Profile submit error:', error);
       toast.error('Failed to update profile: ' + error.message);
     } finally {
       setIsLoading(false);
@@ -86,17 +124,38 @@ export function Profile() {
 
   const handlePhotoSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.profilePhoto || !(formData.profilePhoto instanceof File)) {
+      console.warn('No valid profile photo selected');
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    console.log('Submitting profile photo:', {
+      name: formData.profilePhoto.name,
+      size: formData.profilePhoto.size,
+      type: formData.profilePhoto.type,
+    });
+
     setIsLoading(true);
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("step", "3");
-      if (formData.profilePhoto) {
-        formDataToSend.append("profilePhoto", formData.profilePhoto);
+      formDataToSend.append('step', '3');
+      formDataToSend.append('profilePhoto', formData.profilePhoto);
+
+      // Log FormData contents
+      console.log('FormData prepared for submission:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value instanceof File ? `${value.name} (${value.size} bytes, ${value.type})` : value);
       }
-      await setupProfile("3", formDataToSend);
+
+      await setupProfile('3', formDataToSend);
+      console.log('Profile photo upload successful');
       toast.success('Profile photo updated successfully');
       setIsEditingPhoto(false);
+      setFormData((prev) => ({ ...prev, profilePhoto: null }));
+      setProfileImagePreview(user?.profilePhoto || '/default-profile.png');
     } catch (error) {
+      console.error('Photo submit error:', error);
       toast.error('Failed to update photo: ' + error.message);
     } finally {
       setIsLoading(false);
@@ -104,29 +163,33 @@ export function Profile() {
   };
 
   const handleProfileCancel = () => {
+    console.log('Cancel profile edit');
     setIsEditingProfile(false);
     setFormData({
       fullName: user?.fullName || '',
-      Specialization: user?.specialization || '',
+      specialization: user?.specialization || '',
       hospitalName: user?.hospitalName || '',
       yearsOfExperience: user?.yearsOfExperience || '',
       email: user?.email || '',
       phone: user?.phone || '',
-      profilePhoto: user?.profilePhoto || null,
+      profilePhoto: null,
       bio: user?.bio || '',
-      age: user?.age || 0,  // New field
-      gender: user?.gender || '',  // New field
+      age: user?.age || 0,
+      gender: user?.gender || '',
     });
+    setProfileImagePreview(user?.profilePhoto || '/default-profile.png');
   };
 
   const handlePhotoCancel = () => {
+    console.log('Cancel photo edit');
     setIsEditingPhoto(false);
-    setFormData((prev) => ({ ...prev, profilePhoto: user?.profilePhoto || null }));
+    setFormData((prev) => ({ ...prev, profilePhoto: null }));
     setProfileImagePreview(user?.profilePhoto || '/default-profile.png');
   };
 
   const removeProfileImage = (e) => {
     e.stopPropagation();
+    console.log('Removing profile image preview');
     setFormData((prev) => ({ ...prev, profilePhoto: null }));
     setProfileImagePreview('/default-profile.png');
   };
@@ -206,7 +269,7 @@ export function Profile() {
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3}}
+                transition={{ delay: 0.3 }}
                 className="form-group"
               >
                 <label className="form-label">Gender</label>
@@ -244,8 +307,8 @@ export function Profile() {
                 <label className="form-label">Specialization</label>
                 <input
                   type="text"
-                  value={formData.Specialization}
-                  onChange={(e) => setFormData({ ...formData, Specialization: e.target.value })}
+                  value={formData.specialization}
+                  onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                   className="form-input"
                 />
               </motion.div>
@@ -388,7 +451,7 @@ export function Profile() {
                 whileTap={{ scale: 0.95 }}
                 type="submit"
                 className="form-submit"
-                disabled={isLoading}
+                disabled={isLoading || !formData.profilePhoto}
               >
                 {isLoading ? (
                   <>
@@ -416,10 +479,10 @@ export function Profile() {
                   transition={{ delay: 0.3 }}
                   className="profile-info"
                 >
-                  {profileImagePreview ? (
+                  {user.profilePhoto ? (
                     <img
-                      src={profileImagePreview}
-                      alt={user?.fullName}
+                      src={user.profilePhoto}
+                      alt={user.fullName}
                       className="profile-image"
                     />
                   ) : (
@@ -428,8 +491,8 @@ export function Profile() {
                     </div>
                   )}
                   <div className="profile-text">
-                    <h2 className="profile-name">Dr. {user?.fullName}</h2>
-                    <p className="profile-specialization">{user?.specialization}</p>
+                    <h2 className="profile-name">Dr. {user.fullName}</h2>
+                    <p className="profile-specialization">{user.specialization}</p>
                   </div>
                 </motion.div>
                 <motion.div
@@ -440,19 +503,19 @@ export function Profile() {
                 >
                   <div className="detail-item">
                     <Building2 className="detail-icon" />
-                    <span>{user?.hospitalName}</span>
+                    <span>{user.hospitalName}</span>
                   </div>
                   <div className="detail-item">
                     <Award className="detail-icon" />
-                    <span>{user?.yearsOfExperience} years</span>
+                    <span>{user.yearsOfExperience} years</span>
                   </div>
                   <div className="detail-item">
                     <User className="detail-icon" />
-                    <span>Age: {user?.age || 'Not provided'}</span>
+                    <span>Age: {user.age || 'Not provided'}</span>
                   </div>
                   <div className="detail-item">
                     <User className="detail-icon" />
-                    <span>Gender: {user?.gender || 'Not provided'}</span>
+                    <span>Gender: {user.gender || 'Not provided'}</span>
                   </div>
                 </motion.div>
               </div>
@@ -464,14 +527,14 @@ export function Profile() {
               >
                 <div className="detail-item">
                   <Mail className="detail-icon" />
-                  <span>{user?.email}</span>
+                  <span>{user.email}</span>
                 </div>
                 <div className="detail-item">
                   <Phone className="detail-icon" />
-                  <span>{user?.phone || 'Not provided'}</span>
+                  <span>{user.phone || 'Not provided'}</span>
                 </div>
                 <div className="detail-item detail-bio">
-                  <span>{user?.bio || 'No bio'}</span>
+                  <span>{user.bio || 'No bio'}</span>
                 </div>
               </motion.div>
             </motion.div>

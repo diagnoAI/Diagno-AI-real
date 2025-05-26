@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sidebar } from '../../components/Sidebar';
-import { BottomBar } from '../../components/Bottombar'; // Import the new BottomBar component
+import { BottomBar } from '../../components/Bottombar';
 import { WelcomeScreen } from '../../components/WelcomeScreen';
 import { DashboardHome } from './DashboardHome';
 import { Profile } from './Profile';
@@ -14,10 +14,11 @@ import { useAuth } from '../../context/AuthContext';
 import { PatientReport } from './PatientReport';
 import { Menu, ArrowLeft } from 'lucide-react';
 import './Dashboard.css';
+import NotFound2 from '../../components/NotFound2';
 
 export function Dashboard() {
-  const [showWelcome, setShowWelcome] = useState(false); // Default to false, will check localStorage
-  const { user, logout, isDarkMode } = useAuth();
+  const [showWelcome, setShowWelcome] = useState(false);
+  const { user, logout, isDarkMode, loading } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -26,12 +27,19 @@ export function Dashboard() {
 
   console.log('Current location in Dashboard:', location.pathname);
 
-  // Check if welcome screen has been shown using localStorage
+  // Check authentication
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
+
+  // Check welcome screen
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const welcomeShown = localStorage.getItem('welcomeShown');
-      if (!welcomeShown && user) {
-        setShowWelcome(true); // Show welcome only if not shown before and user is logged in
+      if (!welcomeShown && user && !loading) {
+        setShowWelcome(true);
       }
 
       const handleResize = () => {
@@ -49,19 +57,29 @@ export function Dashboard() {
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
-  }, [user]); // Depend on user to trigger only on login
+  }, [user, loading]);
 
   const handleWelcomeClose = () => {
     setShowWelcome(false);
-    localStorage.setItem('welcomeShown', 'true'); // Mark welcome as shown
+    localStorage.setItem('welcomeShown', 'true');
   };
 
   const handleLogout = () => {
     logout();
     navigate('/');
     setShowDropdown(false);
-    localStorage.removeItem('welcomeShown'); // Optionally reset on logout
+    localStorage.removeItem('welcomeShown');
   };
+
+  if (loading) {
+    return (
+      <div className={`dashboard-wrapper ${isDarkMode ? 'dark' : ''}`}>
+        <div className="loading-container">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`dashboard-wrapper ${isDarkMode ? 'dark' : ''}`}>
@@ -88,7 +106,7 @@ export function Dashboard() {
             </button>
             <img
               src={user?.profilePhoto || '/default-profile.png'}
-              alt={user?.fullname}
+              alt={user?.fullName}
               className="top-bar-profile-image"
             />
             {showDropdown && (
@@ -130,11 +148,10 @@ export function Dashboard() {
             <Route path="settings" element={<Settings />} />
             <Route path="report-generated" element={<ReportGenerated />} />
             <Route path="report/:patientId" element={<PatientReport />} />
-            <Route path="*" element={<div>404: Route not found in Dashboard</div>} />
+            <Route path="*" element={<NotFound2/>} />
           </Routes>
         </div>
       </div>
-
       {/* Bottom Bar for Mobile */}
       {isMobile && <BottomBar />}
     </div>

@@ -2,18 +2,6 @@ from PIL import Image
 import io
 
 def compress_image(image_data, max_size_mb=1, max_dimension=300, quality=85):
-    """
-    Compress an image to ensure it's under max_size_mb (in megabytes).
-    
-    Args:
-        image_data (bytes): The raw image data.
-        max_size_mb (float): Maximum size in MB (default: 1MB).
-        max_dimension (int): Maximum width or height in pixels (default: 300px).
-        quality (int): JPEG quality (0-100, default: 85).
-    
-    Returns:
-        bytes: Compressed image data.
-    """
     # Convert max_size_mb to bytes
     max_size_bytes = max_size_mb * 1024 * 1024
 

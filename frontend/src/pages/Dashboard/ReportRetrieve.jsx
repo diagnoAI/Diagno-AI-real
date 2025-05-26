@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Download, Trash2, Eye, X } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import './ReportRetrieve.css';
 
@@ -14,6 +15,7 @@ export function ReportRetrieve() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { isDarkMode } = useAuth();
 
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -144,7 +146,7 @@ export function ReportRetrieve() {
 
   return (
     <motion.div
-      className="report-retrieve-container"
+      className={`report-retrieve-container ${isDarkMode ? 'dark-mode' : ''}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

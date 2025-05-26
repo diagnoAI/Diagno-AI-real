@@ -1,98 +1,159 @@
 .features {
-    padding: 6rem 0;
-    background: linear-gradient(to bottom, #ffffff, #eff6ff);
-  }
-  
-  .features-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  
-  .features-header {
-    text-align: center;
-  }
-  
+  padding: 6rem 0;
+  background: linear-gradient(to bottom, #ffffff, #eff6ff);
+  height: 100vh;
+}
+
+/* Dark Mode Background */
+.features.dark-mode {
+  background: linear-gradient(to bottom, #0a0a1a, #1e0a3c);
+}
+
+.features-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.features-header {
+  text-align: center;
+}
+
+.features-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Dark Mode Title */
+.features.dark-mode .features-title {
+  color: #ffffff;
+}
+
+.features-subtitle {
+  font-size: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 4rem;
+}
+
+/* Dark Mode Subtitle */
+.features.dark-mode .features-subtitle {
+  color: #d1d5db;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.feature-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Mode Card */
+.features.dark-mode .feature-card {
+  background: rgba(30, 30, 46, 0.8);
+}
+
+/* Hover Effect */
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Hover Glow */
+.features.dark-mode .feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.6);
+}
+
+.feature-icon-container {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 0.5rem;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+/* Dark Mode Icon Container */
+.features.dark-mode .feature-icon-container {
+  background: #1e40af;
+}
+
+.feature-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: #2563eb;
+}
+
+/* Dark Mode Icon */
+.features.dark-mode .feature-icon {
+  color: #60a5fa;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Dark Mode Feature Title */
+.features.dark-mode .feature-title {
+  color: #ffffff;
+}
+
+.feature-description {
+  color: #4b5563;
+  text-align: center;
+}
+
+/* Dark Mode Description */
+.features.dark-mode .feature-description {
+  color: #d1d5db;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
   .features-title {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 1rem;
+    font-size: 2.25rem;
   }
-  
-  .features-subtitle {
-    font-size: 1.25rem;
-    color: #4b5563;
-    margin-bottom: 4rem;
+
+  .features-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-  
+}
+
+@media (min-width: 768px) {
   .features-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .features-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Accessibility: Reduce motion */
+@media (prefers-reduced-motion: reduce) {
   .feature-card {
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: box-shadow 0.2s ease;
+    transition: none;
   }
-  
-  .feature-icon-container {
-    height: 3rem;
-    width: 3rem;
-    border-radius: 0.5rem;
-    background: #dbeafe;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-  }
-  
-  .feature-icon {
-    height: 1.5rem;
-    width: 1.5rem;
-    color: #2563eb;
-  }
-  
-  .feature-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 0.5rem;
-    text-align: center;
-  }
-  
-  .feature-description {
-    color: #4b5563;
-    text-align: center;
-  }
-  
-  /* Responsive adjustments */
-  @media (min-width: 640px) {
-    .features-title {
-      font-size: 2.25rem;
-    }
-  
-    .features-container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 768px) {
-    .features-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .features-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  
-    .features-container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
+}

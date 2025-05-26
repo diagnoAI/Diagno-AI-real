@@ -52,7 +52,7 @@ def upload_patient():
         return jsonify({"message": "All fields are required"}), 400
 
     # Validate patient ID uniqueness
-    if patients.find_one({"patientId": patient_id}):
+    if patients.find_one({"patientId": patient_id, "doctorId": ObjectId(doctor_id)}):
         return jsonify({"message": "Patient ID already exists"}), 400
 
     # Save CT scan to scan_image folder
@@ -128,7 +128,7 @@ def upload_patient():
                 "name": patient_name,
                 "age": int(age),
                 "patient_id": patient_id,
-                "dob": None,
+                "gender": gender,
                 "date_of_scan": date
             },
             scan_image_path,
@@ -147,7 +147,8 @@ def upload_patient():
                 "name": patient_name,
                 "age": int(age),
                 "patient_id": patient_id,
-                "date_of_scan": date
+                "date_of_scan": date,
+                "gender" : gender
             },
             scan_image_path,
             report_path

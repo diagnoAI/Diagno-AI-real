@@ -6,8 +6,16 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #eff6ff, #ecfeff, #f3e8ff);
-  isolation: isolate; /* Ensures proper layering */
+  background: rgba(37, 99, 235, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  margin: 1rem;
+  isolation: isolate;
+}
+
+.analyzing-animation.dark-mode {
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Container for Animation Elements */
@@ -18,7 +26,7 @@
   justify-content: center;
   width: 120px;
   height: 120px;
-  margin-bottom: 40px; /* Space between animation and text */
+  margin-bottom: 40px;
 }
 
 /* Outer Circle */
@@ -36,6 +44,11 @@
   transform-origin: center;
 }
 
+.analyzing-animation.dark-mode .analyzing-circle.outer {
+  border: 8px solid rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+}
+
 /* Inner Circle */
 .analyzing-circle.inner {
   width: 80px;
@@ -44,6 +57,11 @@
   border-left: 6px solid transparent;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
   transform-origin: center;
+}
+
+.analyzing-animation.dark-mode .analyzing-circle.inner {
+  border: 6px solid rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
 }
 
 /* Orbiting Dots Container */
@@ -68,18 +86,28 @@
   box-shadow: 0 0 5px rgba(147, 51, 234, 0.4);
 }
 
+.analyzing-animation.dark-mode .dot {
+  background-color: #a78bfa;
+  box-shadow: 0 0 5px rgba(167, 139, 250, 0.4);
+}
+
 .dot:nth-child(2) {
   transform-origin: 100% 50%;
 }
 
-/* Animated Text (Moved Below) */
+/* Animated Text */
 .analyzing-text {
-  margin-top: 0; /* Reset margin-top since it's now below */
+  margin-top: 0;
   font-size: 1.8rem;
   color: #1e3a8a;
   font-weight: 600;
   text-shadow: 0 0 5px rgba(30, 58, 138, 0.2);
   z-index: 1;
+}
+
+.analyzing-animation.dark-mode .analyzing-text {
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 /* Background Overlay for Gradient Animation */
@@ -99,12 +127,25 @@
   z-index: 0;
 }
 
+.analyzing-animation.dark-mode .background-overlay {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(167, 139, 250, 0.05),
+    rgba(255, 255, 255, 0.05)
+  );
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .analyzing-animation {
+    margin: 0.5rem;
+  }
+
   .animation-container {
     width: 90px;
     height: 90px;
-    margin-bottom: 30px; /* Adjusted spacing for mobile */
+    margin-bottom: 30px;
   }
 
   .analyzing-circle.outer {
@@ -131,5 +172,17 @@
 
   .analyzing-text {
     font-size: 1.4rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .analyzing-circle,
+  .analyzing-dot,
+  .dot,
+  .analyzing-text,
+  .background-overlay {
+    animation: none !important;
+    transition: none !important;
   }
 }

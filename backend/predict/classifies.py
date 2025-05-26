@@ -1,14 +1,15 @@
-from tensorflow.keras.preprocessing import image
+# from tensorflow.keras.preprocessing import image
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import load_model
+# from tensorflow.keras.models import load_model
 import cv2
-import warnings
 import os
+import warnings
 warnings.filterwarnings(action="ignore")
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-model = load_model('D://Dataset Preprocess/Diagno AI real/backend/AI models/DIagnoGenix_AI.h5', compile=False)
+
+model = tf.keras.models.load_model('D://lastcheck 2//Diagno AI real/backend/ai_models/DIagnoGenix_AI.h5', compile=False)
 
 def prepare_image(image_path):
     img = cv2.imread(image_path)

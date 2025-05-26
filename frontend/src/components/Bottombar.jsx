@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Plus, FileText, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import '../styles/BottomBar.css';
 
 export function BottomBar() {
+  const { isDarkMode } = useAuth();
   const [activeTooltip, setActiveTooltip] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
   const location = useLocation();
@@ -33,7 +35,7 @@ export function BottomBar() {
   }, [timeoutId]);
 
   return (
-    <div className="bottom-bar">
+    <div className={`bottom-bar ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="bottom-bar-item-wrapper">
         <Link
           to="/dashboard"

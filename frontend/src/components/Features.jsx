@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Clock, Shield, Stethoscope } from 'lucide-react';
-import '../styles/Features.css'
+import { useAuth } from '../context/AuthContext';
+import '../styles/Features.css';
 
 const features = [
   {
@@ -27,13 +28,16 @@ const features = [
 ];
 
 export function Features() {
+  const { isDarkMode } = useAuth();
+
   return (
-    <section id="features" className="features">
+    <section id="features" className={`features ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="features-container">
         <div className="features-header">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            // whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="features-title"
           >
@@ -41,7 +45,7 @@ export function Features() {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="features-subtitle"
           >
@@ -55,8 +59,9 @@ export function Features() {
               key={feature.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              // whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="feature-card glass hover:shadow-xl"
+              className="feature-card glass"
             >
               <div className="feature-icon-container">
                 <feature.icon className="feature-icon" />
