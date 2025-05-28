@@ -48,7 +48,7 @@ Tools: Google Colab (Model training), GitHub, Labelme
 
 
 ### Get Started
-![Get started](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/HomePage.png.jpg)
+![Get started](https://github.com/diagnoAI/Diagno-AI-real/blob/main/assets/HomePage.png.jpg)
 
 ### Login Page
 ![Login Page](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/Login.png.jpg)
