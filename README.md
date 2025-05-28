@@ -1,49 +1,51 @@
 Diagno AI – Kidney Stone Detection Web App
-A smart web application built for doctors to detect and classify kidney stones from CT scan images using AI/ML models, with an auto-generated patient report.
+
+      A smart web application built for doctors to detect and classify kidney stones from CT scan images using AI/ML models, with an auto-generated patient report.
 
 Features
-Doctor-only login and signup (JWT authentication)
 
-Upload kidney CT scan images
+-> Doctor-only login and signup (JWT authentication)
 
-AI-based kidney stone detection with:
+-> Upload kidney CT scan images
 
-Highlight stones
+-> AI-based kidney stone detection with:
 
-Size, shape, and location identification
+-> Highlight stones
+
+-> Size, shape, and location identification
 
 
-Auto-generated report with:
+-> Auto-generated report with:
 
-Patient details
+   -> Patient details
 
-Uploaded vs detected image comparison
+   -> Uploaded vs detected image comparison
 
-Stone Details
+   -> Stone Details
 
-Save or Print as PDF (A4 layout)
+   -> Save or Print as PDF (A4 layout)
 
-Search patients by name or register number
+-> Search patients by name or register number
 
-For Easily Retrive Old Patients Reports
+-> For Easily Retrive Old Patients Reports
 
-Dark/light mode toggle
+-> Dark/light mode toggle
 
-Mobile-responsive and user-friendly UI
+-> Mobile-responsive and user-friendly UI
 
 
 
 Tech Stack
 
-Frontend: React.js (Vite), JavaScript, Tailwind CSS
+  -> Frontend: React.js (Vite), JavaScript, Tailwind CSS
 
-Backend: Flask (Python), JWT Auth
+  -> Backend: Flask (Python), JWT Auth
 
-Database: MongoDB (Atlas)
+  -> Database: MongoDB (Atlas)
 
-AI/ML: OpenCV, U-Net segmentation, CNN classification
+  -> AI/ML: OpenCV, U-Net segmentation, CNN classification
 
-Tools: Google Colab (Model training), GitHub, Labelme
+  -> Tools: Google Colab (Model training), GitHub, Labelme
 
 
 
