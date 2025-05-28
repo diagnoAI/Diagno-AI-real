@@ -44,16 +44,19 @@ AI/ML: OpenCV, U-Net segmentation, CNN classification
 Tools: Google Colab (Model training), GitHub, Labelme
 
 ### Login Page
-![Login Page](https://github.com/your-username/your-repo-name/raw/main/assets/login-page.png)
+![Login Page](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/Login.png.jpg)
 
 ### Upload Form
-![Upload Form](https://github.com/your-username/your-repo-name/raw/main/assets/upload-form.png)
+![Upload Form](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/Upload.jpg)
 
 ### Detection Result
-![Detection Result](https://github.com/your-username/your-repo-name/raw/main/assets/detection-result.png)
+![Detection Result](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/display.jpg)
 
 ### Final Report
-![Final Report](https://github.com/your-username/your-repo-name/raw/main/assets/final-report.png)
+![Final Report](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/report.jpg)
+
+### Report Retrive
+![Report Retrive](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/ReportRetrive.png.jpg)
 
 
 How to Run
