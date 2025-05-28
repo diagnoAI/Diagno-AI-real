@@ -31,6 +31,8 @@ Dark/light mode toggle
 
 Mobile-responsive and user-friendly UI
 
+
+
 Tech Stack
 
 Frontend: React.js (Vite), JavaScript, Tailwind CSS
@@ -42,6 +44,11 @@ Database: MongoDB (Atlas)
 AI/ML: OpenCV, U-Net segmentation, CNN classification
 
 Tools: Google Colab (Model training), GitHub, Labelme
+
+
+
+### Get Started
+![Get started](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/HomePage.png.jpg)
 
 ### Login Page
 ![Login Page](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/Login.png.jpg)
@@ -59,16 +66,28 @@ Tools: Google Colab (Model training), GitHub, Labelme
 ![Report Retrive](https://github.com/diagnoAI/Diagno-AI-real/blob/9dd46da2250fd165c675842bf9d59c66cb653278/assets/ReportRetrive.png.jpg)
 
 
+
+
 How to Run
+
 Clone this repository
 
 Setup backend in /backend folder (Python, Flask)
-
+  
 Setup frontend in /frontend folder (React + Vite)
 
 Use MongoDB URI in .env files
 
 Run frontend and backend on separate ports
+
+Run Backend First:
+  cd backend
+  python app.py
+
+Run Frontend next:
+  cd frontend
+  npm run dev
+
 
 
 
