@@ -1,6 +1,6 @@
 Diagno AI – Kidney Stone Detection Web App
 
-      A smart web application built for doctors to detect and classify kidney stones from CT scan images using AI/ML models, with an auto-generated patient report.
+A smart web application built for doctors to detect and classify kidney stones from CT scan images using AI/ML models, with an auto-generated patient report.
 
 Features
 
@@ -83,12 +83,16 @@ Use MongoDB URI in .env files
 Run frontend and backend on separate ports
 
 Run Backend First:
-  cd backend
-  python app.py
+
+     cd backend
+
+     python app.py
 
 Run Frontend next:
-  cd frontend
-  npm run dev
+
+     cd frontend
+     
+     npm run dev
 
 
 
